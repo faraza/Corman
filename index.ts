@@ -1,4 +1,4 @@
-import { testBasicImageGen } from "./ImageModule"
+import { testBasicImageGen, testCharacterMouthAnimation } from "./ImageAndAnimation"
 
 const hello = "hello"
 
@@ -7,4 +7,4 @@ const addWorldToString = (input: string): string=>{
 }
 
 console.log(addWorldToString(hello))
-testBasicImageGen()
+testCharacterMouthAnimation()

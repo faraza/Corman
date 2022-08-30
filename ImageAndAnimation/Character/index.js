@@ -12,17 +12,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testBasicImageGen = void 0;
+exports.animateCharacter = void 0;
 const sharp_1 = __importDefault(require("sharp"));
-const path_1 = __importDefault(require("path"));
-function testBasicImageGen() {
-    console.log("Testing basic image gen");
-    duplicateImage('/Users/farazabidi/Documents/Corman/animation_assets/backgrounds/kings_chambers.png');
+const characterFilePath = "/Users/farazabidi/Documents/Corman/animation_assets/characters/maho/ots/neutral/";
+const outputFilePath = "/Users/farazabidi/Documents/Corman/output_animation/";
+let frameNumber = 0;
+/**
+ * TODO: This should be exported to a separate class called Animator
+ */
+function animateCharacter(backgroundImage) {
+    //TODO: generate multiple
+    addCharacterToBackground(1, backgroundImage);
 }
-exports.testBasicImageGen = testBasicImageGen;
-function duplicateImage(pathToImage) {
+exports.animateCharacter = animateCharacter;
+//TODO: Take character info as param
+function addCharacterToBackground(poseNumber, backgroundImage) {
     return __awaiter(this, void 0, void 0, function* () {
-        const newPath = path_1.default.dirname(pathToImage) + "/" + path_1.default.parse(pathToImage).name + "_dup" + path_1.default.extname(pathToImage);
-        yield (0, sharp_1.default)(pathToImage).toFile(newPath);
+        yield (0, sharp_1.default)(backgroundImage)
+            .composite([
+            { input: characterFilePath + poseNumber + ".png", top: 100, left: 200 }
+        ])
+            .toFile(outputFilePath + frameNumber++ + ".png");
+        console.log("addCharacterToBackground. Filepath: " + (outputFilePath + (frameNumber - 1)));
     });
 }

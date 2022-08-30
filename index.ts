@@ -1,3 +1,5 @@
+import { testBasicImageGen } from "./ImageModule"
+
 const hello = "hello"
 
 const addWorldToString = (input: string): string=>{
@@ -5,3 +7,4 @@ const addWorldToString = (input: string): string=>{
 }
 
 console.log(addWorldToString(hello))
+testBasicImageGen()

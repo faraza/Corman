@@ -10,33 +10,33 @@ Currently, Corman uses pre-built animation models for the actors. But as AI tool
 
 The automatic decisions that Corman makes will likely be inferior to a human's. Corman's output is meant to be easily editable by the user just by editing the script. Ultimately Corman's goal is to make it as easy as possible for a person to make an animated movie.
 
-Future Work:
+# Future Work
 
-Short Term
--Automatically add sound effects and foley
-    + This is partly a language model problem, partly a 'get a big library of sounds' problem
--Add a library of pre-rigged actors; Corman will automatically pick the best ones
--Add a library of film score for dramatic moments
--Add a better library of TTS voices
--Deploy on cloud
--Make movies downloadable and shareable
--Proper Lip Syncing
+## Short Term
+- [ ] Automatically add sound effects and foley
+    - This is partly a language model problem, partly a 'get a big library of sounds' problem
+- [ ] Add a library of pre-rigged actors; Corman will automatically pick the best ones
+- [ ] Add a library of film score for dramatic moments
+- [ ] Add a better library of TTS voices
+- [ ] Deploy on cloud
+- [ ] Make movies downloadable and shareable
+- [ ] Proper Lip Syncing
 
-Medium Term
--Modify the Image Model so it can provide multiple shots of the same background
-    + We're using a trick with mirroring to do this, but it would be better to actual generate multiple different angles of the same background
-    + Then we can add in a lot more camera shots
--Support different animation styles - 8-bit, Low Poly 2d, Anime
--Allow users to mo-cap performances to replace Corman's pre-generated ones.
-    + This should be done w/o green-screen. Use an iPhone or Webcam.
-    + Add voice transformers
--Automatically animate sky, water, and similar concepts
+## Medium Term
+- [ ] Modify the Image Model so it can provide multiple shots of the same background
+    - We're using a trick with mirroring to do this, but it would be better to actual generate multiple different angles of the same background
+    - Then we can add in a lot more camera shots
+- [ ] Support different animation styles - 8-bit, Low Poly 2d, Anime
+- [ ] Allow users to mo-cap performances to replace Corman's pre-generated ones.
+    - This should be done w/o green-screen. Use an iPhone or Webcam.
+    - Add voice transformers
+- [ ] Automatically animate sky, water, and similar concepts
 
 
-Long Term
--Add a large library of animations for actors to interact with each other and objects
--Dynamically generate actors
--Image Model creates midground with walkable areas vs. non-walkable areas clearly de-lineated. Actors will be able to actually move in the scene
-    + This will take Corman from being like a Stageplay to being like a Movie
--Seperately generate background so we can simulate parallax
--Integrate AI personalities (like Inworld AI), so viewers can pause the movie and ask the characters questions if they wish.
+## Long Term
+- [ ] Add a large library of animations for actors to interact with each other and objects
+- [ ] Dynamically generate actors
+- [ ] Image Model creates midground with walkable areas vs. non-walkable areas clearly de-lineated. Actors will be able to actually move in the scene
+    - This will take Corman from being like a Stageplay to being like a Movie
+- [ ] Seperately generate background so we can simulate parallax
+- [ ] Integrate AI personalities (like Inworld AI), so viewers can pause the movie and ask the characters questions if they wish.

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.animateCharacter = void 0;
+exports.addCharacterToBackground = exports.animateCharacter = void 0;
 const sharp_1 = __importDefault(require("sharp"));
 const characterFilePath = "/Users/farazabidi/Documents/Corman/animation_assets/characters/maho/ots/neutral/";
 const outputFilePath = "/Users/farazabidi/Documents/Corman/output_animation/";
@@ -36,3 +36,4 @@ function addCharacterToBackground(poseNumber, backgroundImage) {
         console.log("addCharacterToBackground. Filepath: " + (outputFilePath + (frameNumber - 1)));
     });
 }
+exports.addCharacterToBackground = addCharacterToBackground;

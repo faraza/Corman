@@ -22,9 +22,20 @@ function testBasicImageGen() {
     duplicateImage('/Users/farazabidi/Documents/Corman/animation_assets/backgrounds/kings_chambers.png');
 }
 exports.testBasicImageGen = testBasicImageGen;
-function testCharacterMouthAnimation() {
+function testCharacterMouthAnimation(numberOfMouthMovements = 50) {
     console.log("Testing character mouth animation");
-    (0, Character_1.animateCharacter)(backgroundImageFilepath);
+    let curMouthNum = 0;
+    for (let i = 0; i < numberOfMouthMovements; i++) {
+        if (curMouthNum == 0)
+            curMouthNum = 1;
+        else if (curMouthNum == 2)
+            curMouthNum = 1;
+        else if (Math.random() > .5)
+            curMouthNum = 2;
+        else
+            curMouthNum = 0;
+        (0, Character_1.addCharacterToBackground)(curMouthNum, backgroundImageFilepath);
+    }
 }
 exports.testCharacterMouthAnimation = testCharacterMouthAnimation;
 function duplicateImage(pathToImage) {

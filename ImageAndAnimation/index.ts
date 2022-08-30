@@ -1,6 +1,6 @@
 import sharp from 'sharp'
 import path from 'path'
-import { animateCharacter } from './Character'
+import { addCharacterToBackground, animateCharacter } from './Character'
 
 
 const backgroundImageFilepath = "/Users/farazabidi/Documents/Corman/animation_assets/backgrounds/kings_chambers.png"
@@ -9,9 +9,18 @@ export function testBasicImageGen (): void{
     duplicateImage('/Users/farazabidi/Documents/Corman/animation_assets/backgrounds/kings_chambers.png')
 }
 
-export function testCharacterMouthAnimation (): void{
+export function testCharacterMouthAnimation (numberOfMouthMovements: number = 50): void{
     console.log("Testing character mouth animation")
-    animateCharacter(backgroundImageFilepath)
+    let curMouthNum = 0
+    for(let i = 0; i < numberOfMouthMovements; i++){
+        if(curMouthNum == 0) curMouthNum = 1
+        else if(curMouthNum == 2) curMouthNum = 1
+        else if(Math.random() > .5) curMouthNum = 2 
+        else curMouthNum = 0
+        
+        addCharacterToBackground(curMouthNum, backgroundImageFilepath)
+    }
+    
 }
 
 async function duplicateImage(pathToImage: string): Promise<void>{

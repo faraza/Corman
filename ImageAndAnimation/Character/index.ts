@@ -13,7 +13,7 @@ export function animateCharacter(backgroundImage: string): void{
 }
 
 //TODO: Take character info as param
-async function addCharacterToBackground(poseNumber: number, backgroundImage: string): Promise<void>{    
+export async function addCharacterToBackground(poseNumber: number, backgroundImage: string): Promise<void>{    
     await sharp(backgroundImage)
     .composite([
         {input: characterFilePath + poseNumber + ".png", top: 100, left: 200}

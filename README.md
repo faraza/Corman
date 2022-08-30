@@ -15,7 +15,8 @@ The automatic decisions that Corman makes will likely be inferior to a human's. 
 ## Short Term
 - [ ] Automatically add sound effects and foley
     - This is partly a language model problem, partly a 'get a big library of sounds' problem
-- [ ] Add a library of pre-rigged actors; Corman will automatically pick the best ones
+- [ ] Add a library of pre-rigged actors 
+    - [ ] Make Corman automatically pick the best one
 - [ ] Add a library of film score for dramatic moments
 - [ ] Add a better library of TTS voices
 - [ ] Deploy on cloud

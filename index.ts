@@ -1,4 +1,4 @@
-const MovieMaker = require('./MovieMaker')
+import {makeMovieFromPrompt} from './MovieMaker'
 
 //TODO: Setup server and routing. Make calls based on that
 

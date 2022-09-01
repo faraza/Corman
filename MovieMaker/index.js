@@ -13,7 +13,7 @@
  * @returns path to movie video file
  * //TODO: Should also return movieID
  */
-exports.makeMovieFromPrompt = (prompt) => {
+export const makeMovieFromPrompt = (prompt) => {
     console.log("MovieMaker::makeMovieFromPrompt: ", prompt);
     //TODO: Create and run generator object
     //TODO: Feed results of generator to director
@@ -28,7 +28,7 @@ exports.makeMovieFromPrompt = (prompt) => {
  * @returns path to movie video file
  * //TODO: Should also return movieID
  */
-exports.makeMovieFromScript = (script, movieID) => {
+export const makeMovieFromScript = (script, movieID) => {
     //TODO
     const pathToMovieFile = "";
     return pathToMovieFile;

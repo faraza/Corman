@@ -19,7 +19,6 @@ function generateScript(prompt, filePath) {
 }
 exports.generateScript = generateScript;
 function writeScriptToDisk(script, filePath) {
-    //TODO: Just put in dummy
     return new Promise((res, rej) => {
         setTimeout(() => {
             res();
@@ -29,7 +28,7 @@ function writeScriptToDisk(script, filePath) {
 function _getDummyScriptFromServer(prompt) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            "Dummy script 1";
+            resolve("Dummy script 1");
         }, 3000);
     });
 }

@@ -5,7 +5,6 @@ export async function generateScript(prompt: string, filePath: string): Promise<
 }
 
 function writeScriptToDisk(script: string, filePath: string): Promise<void>{
-    //TODO: Just put in dummy
     return new Promise((res, rej)=>{
         setTimeout(()=>{
             res()
@@ -16,7 +15,7 @@ function writeScriptToDisk(script: string, filePath: string): Promise<void>{
 function _getDummyScriptFromServer(prompt: string): Promise<string>{
     return new Promise((resolve, reject)=>{
         setTimeout(()=>{
-            "Dummy script 1"
+            resolve("Dummy script 1")
         }, 3000)
     })
 }

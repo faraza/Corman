@@ -28,17 +28,24 @@ class DynamicAssetGenerator {
         this.scriptSupervisor = new ScriptSupervisor_1.ScriptSupervisor();
     }
     generateAssets() {
+        console.log("DAG::generateAssets 1");
         this.generateScript(); //TODO: Convert into promise chain
+        console.log("DAG::generateAssets 2");
         this.generateLocations();
+        console.log("DAG::generateAssets 3");
         this.generateVoicedDialoge();
+        console.log("DAG::generateAssets 4");
         return this.assetManager;
     }
     generateScript() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("DAG::generateScript 1");
                 const script = yield (0, Script_1.generateScript)(this.prompt, this.assetManager.getScriptFilepath());
+                console.log("DAG::generateScript 2");
                 this.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath());
                 this.assetManager.setScript(script);
+                console.log("DAG::generateScript 3");
             }
             catch (error) {
                 console.log("ERROR - DAG::generateScript: ", error);

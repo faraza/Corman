@@ -1,15 +1,12 @@
 
 const Script = require('./Script')
+const ScriptSupervisor = require('../ScriptSupervisor')
 
-/**
- * Start generation w/  
- */
-class DynamicAssetGenerator{
+export class DynamicAssetGenerator{
     private prompt: string
-    private assetManager = new DynamicAssetManager;
-    private scriptSupervisor: any //TODO
-
-    //TODO: Dynamic Asset Manager
+    private assetManager = new DynamicAssetManager //TODO: Figure out type bs
+    private scriptSupervisor = new ScriptSupervisor //TODO: Figure out type bs
+    
 
     /**
      * TODO: Also support user written script
@@ -20,7 +17,7 @@ class DynamicAssetGenerator{
         this.prompt = prompt
     }
     
-    public generateAssets(): DynamicAssetManager{        
+    public generateAssets(): DynamicAssetManager{ //TODO: Return Tuple of DAM and ScriptSupervisor    
         this.generateScript(); //TODO: Convert into promise chain
         this.generateLocations();
         this.generateVoicedDialoge();
@@ -29,26 +26,24 @@ class DynamicAssetGenerator{
     }
 
     //TODO: Make all of these properly async
-    private generateScript(): Promise<void>{
+    private generateScript(){
         const script = Script.generateScript(prompt)        
-        this.scriptSupervisor.setScript(script) //TODO
+        this.scriptSupervisor.setScript(script)
         this.assetManager.setScript(script)
         
-        return Promise.resolve()
     }
 
-    private generateLocations(): Promise<void>{
+    private generateLocations(){     
+        console.log("DAG::generateLocations")
+     
         //TODO: Call imageGenerator from IG class, passing it getAllLocations from DAM.scriptSupervisor
         //TODO: Give location images to DAM
 
-        return Promise.resolve()
     }
 
-    private generateVoicedDialoge(): Promise<void>{
+    private generateVoicedDialoge(){
         //TODO: Call generate voices from Voice 
         //TODO: Give audio files to DAM
-
-        return Promise.resolve()
     }
 
 }

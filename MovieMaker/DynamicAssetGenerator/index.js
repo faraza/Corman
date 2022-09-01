@@ -1,17 +1,17 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DynamicAssetGenerator = void 0;
 const Script = require('./Script');
-/**
- * Start generation w/
- */
+const ScriptSupervisor = require('../ScriptSupervisor');
 class DynamicAssetGenerator {
-    //TODO: Dynamic Asset Manager
     /**
      * TODO: Also support user written script
      * TODO: Also include movieID so we don't have to rebuild certain assets
      * @param prompt short prompt user enters
      */
     constructor(prompt) {
-        this.assetManager = new DynamicAssetManager;
+        this.assetManager = new DynamicAssetManager; //TODO: Figure out type bs
+        this.scriptSupervisor = new ScriptSupervisor; //TODO: Figure out type bs
         this.prompt = prompt;
     }
     generateAssets() {
@@ -23,21 +23,23 @@ class DynamicAssetGenerator {
     //TODO: Make all of these properly async
     generateScript() {
         const script = Script.generateScript(prompt);
-        this.scriptSupervisor.setScript(script); //TODO
+        this.scriptSupervisor.setScript(script);
         this.assetManager.setScript(script);
-        return Promise.resolve();
     }
     generateLocations() {
+        console.log("DAG::generateLocations");
+        for (let i = 0; i < this.scriptSupervisor.blah; i++) {
+            //TODO
+        }
         //TODO: Call imageGenerator from IG class, passing it getAllLocations from DAM.scriptSupervisor
         //TODO: Give location images to DAM
-        return Promise.resolve();
     }
     generateVoicedDialoge() {
         //TODO: Call generate voices from Voice 
         //TODO: Give audio files to DAM
-        return Promise.resolve();
     }
 }
+exports.DynamicAssetGenerator = DynamicAssetGenerator;
 /**
  * This class just stores all the stuff that's generated and gives convenient functions for accessing them.
  * Not really any logic going on here

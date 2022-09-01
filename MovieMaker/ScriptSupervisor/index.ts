@@ -3,7 +3,7 @@
  * It gets locations, dialogue
  */
 
-class ScriptSupervisor{    
+export class ScriptSupervisor{    
     /**
      * Returns Dialogue object
      * @param sceneNumber 

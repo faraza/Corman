@@ -1,9 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateScript = void 0;
 function generateScript(prompt) {
-    //TODO
+    //TODO: Make it async
     return "";
 }
-//TODO: Return ScriptSupervisor object
-function parseScript(script) {
-    //TODO
-}
+exports.generateScript = generateScript;

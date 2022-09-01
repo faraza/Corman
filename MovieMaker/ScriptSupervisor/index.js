@@ -3,6 +3,8 @@
  * This class takes a written script and parses out all the relevant information.
  * It gets locations, dialogue
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ScriptSupervisor = void 0;
 class ScriptSupervisor {
     /**
      * Returns Dialogue object
@@ -30,6 +32,7 @@ class ScriptSupervisor {
         //TODO
     }
 }
+exports.ScriptSupervisor = ScriptSupervisor;
 class Dialogue {
     constructor() {
         this.actorName = "";

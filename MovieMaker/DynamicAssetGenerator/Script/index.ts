@@ -1,12 +1,4 @@
-
-
-
-function generateScript(prompt: string): string{
-    //TODO
+export function generateScript(prompt: string): string{
+    //TODO: Make it async
     return ""
-}
-
-//TODO: Return ScriptSupervisor object
-function parseScript(script: string){
-    //TODO
 }

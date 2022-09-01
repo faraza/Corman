@@ -30,12 +30,16 @@ export class DynamicAssetGenerator{
 
         return this.assetManager
     }
-
-    //TODO: Make all of these properly async
-    private generateScript(){
-        const script = generateScript(this.prompt, this.assetManager.getScriptFilepath())        
-        this.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath())
-        this.assetManager.setScript(script)        
+    
+    private async generateScript(){
+        try{
+            const script = await generateScript(this.prompt, this.assetManager.getScriptFilepath())        
+            this.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath())
+            this.assetManager.setScript(script)        
+        }
+        catch(error){
+            console.log("ERROR - DAG::generateScript: ", error)
+        }        
     }
 
     private generateLocations(){     

@@ -11,20 +11,20 @@ class DynamicAssetGenerator {
      * @param prompt short prompt user enters
      */
     constructor(prompt) {
+        this.assetManager = new DynamicAssetManager;
         this.prompt = prompt;
     }
-    //TODO: Make this return DynamicAssetManager
     generateAssets() {
-        //TODO: If user passed in a script, don't call generate Script
         this.generateScript(); //TODO: Convert into promise chain
         this.generateLocations();
         this.generateVoicedDialoge();
-        return Promise.resolve();
+        return this.assetManager;
     }
     //TODO: Make all of these properly async
     generateScript() {
         const script = Script.generateScript(prompt);
-        //TODO: give script to DynamicAssetManager
+        this.scriptSupervisor.setScript(script); //TODO
+        this.assetManager.setScript(script);
         return Promise.resolve();
     }
     generateLocations() {
@@ -38,8 +38,42 @@ class DynamicAssetGenerator {
         return Promise.resolve();
     }
 }
+/**
+ * This class just stores all the stuff that's generated and gives convenient functions for accessing them.
+ * Not really any logic going on here
+ */
 class DynamicAssetManager {
-    constructor(script) {
-        //TODO: Parses the script to get location
+    constructor() {
+        this.script = "";
+        /**
+         * For that scene number in the script, what is the location image associated with it? This will return that
+         * returns the filepath
+         * @param sceneNumber the order of the scene in the script. Each time a new location is set, that is a new scene number
+         */
+    }
+    getLocationImage(sceneNumber) {
+        return "";
+    }
+    /**
+     *
+     * @param sceneNumber the order of the scene in the script. Each time a new location is set, that is a new scene number
+     * @param lineNumber Each new character speech heading increments the line by 1. Narrator lines also count.
+     *
+     * Returns the filepath to that piece of audio
+     */
+    getRecordedDialogue(sceneNumber, lineNumber) {
+        return "";
+    }
+    getScript() {
+        return this.script;
+    }
+    setScript(script) {
+        this.script = script;
+    }
+    setLocationImages() {
+        //TODO:
+    }
+    setVoicedDialogueFiles() {
+        //TODO: 
     }
 }

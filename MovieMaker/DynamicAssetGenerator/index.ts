@@ -6,6 +6,9 @@ const Script = require('./Script')
  */
 class DynamicAssetGenerator{
     private prompt: string
+    private assetManager = new DynamicAssetManager;
+    private scriptSupervisor: any //TODO
+
     //TODO: Dynamic Asset Manager
 
     /**
@@ -13,26 +16,23 @@ class DynamicAssetGenerator{
      * TODO: Also include movieID so we don't have to rebuild certain assets
      * @param prompt short prompt user enters
      */
-    public constructor(prompt: string){
+    public constructor(prompt: string){ //TODO: Can you make a constructor async? If so, that's what we should do so scriptSupervisor can always be initialized
         this.prompt = prompt
     }
     
-    //TODO: Make this return DynamicAssetManager
-    public generateAssets(): Promise<void>{
-        //TODO: If user passed in a script, don't call generate Script
-        
+    public generateAssets(): DynamicAssetManager{        
         this.generateScript(); //TODO: Convert into promise chain
         this.generateLocations();
         this.generateVoicedDialoge();
 
-        return Promise.resolve()
+        return this.assetManager
     }
 
     //TODO: Make all of these properly async
     private generateScript(): Promise<void>{
-        const script = Script.generateScript(prompt)
-        
-        //TODO: give script to DynamicAssetManager
+        const script = Script.generateScript(prompt)        
+        this.scriptSupervisor.setScript(script) //TODO
+        this.assetManager.setScript(script)
         
         return Promise.resolve()
     }
@@ -53,10 +53,49 @@ class DynamicAssetGenerator{
 
 }
 
-class DynamicAssetManager{    
-    
-    
-    public constructor(script: string){
-        //TODO: Parses the script to get location
+/**
+ * This class just stores all the stuff that's generated and gives convenient functions for accessing them.
+ * Not really any logic going on here
+ */
+class DynamicAssetManager{  
+    private script = ""      
+
+    public getLocationImage(sceneNumber: number): string{
+        return ""
     }
+
+    /**
+     * 
+     * @param sceneNumber the order of the scene in the script. Each time a new location is set, that is a new scene number
+     * @param lineNumber Each new character speech heading increments the line by 1. Narrator lines also count.
+     * 
+     * Returns the filepath to that piece of audio
+     */
+    public getRecordedDialogue(sceneNumber: number, lineNumber: number): string{
+        return ""
+    }
+
+    public getScript(): string{
+        return this.script
+    }
+    
+    
+    public setScript(script: string){
+        this.script = script
+    }
+
+    public setLocationImages(){ //TODO: What does it take as param?
+        //TODO:
+    }
+
+    public setVoicedDialogueFiles(){
+        //TODO: 
+    }
+
+    /**
+     * For that scene number in the script, what is the location image associated with it? This will return that
+     * returns the filepath
+     * @param sceneNumber the order of the scene in the script. Each time a new location is set, that is a new scene number
+     */
+
 }

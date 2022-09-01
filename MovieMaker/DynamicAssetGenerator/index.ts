@@ -17,22 +17,17 @@ export class DynamicAssetGenerator{
      * TODO: Also include movieID so we don't have to rebuild certain assets
      * @param prompt short prompt user enters
      */
-    public constructor(prompt: string){ //TODO: Can you make a constructor async? If so, that's what we should do so scriptSupervisor can always be initialized
+    public constructor(prompt: string){
         this.prompt = prompt
         this.assetManager = new DynamicAssetManager(this.movieID)
         this.scriptSupervisor = new ScriptSupervisor()
     }
     
-    public generateAssets(){ //TODO: Return Tuple of DAM and ScriptSupervisor    
-        console.log("DAG::generateAssets 1")
-        this.generateScript(); //TODO: Convert into promise chain
-        console.log("DAG::generateAssets 2")
-        this.generateLocations();
-        console.log("DAG::generateAssets 3")
-        this.generateVoicedDialoge();
-        console.log("DAG::generateAssets 4")
+    public async generateAssets(){ //TODO: Return Tuple of DAM and ScriptSupervisor            
+        await this.generateScript()
+        await Promise.all([this.generateLocations(), this.generateVoicedDialoge()])                
 
-        return this.assetManager
+        return {assetManager: this.assetManager, scriptSupervisor: this.scriptSupervisor}
     }
     
     private async generateScript(){
@@ -49,22 +44,30 @@ export class DynamicAssetGenerator{
         }        
     }
 
-    private generateLocations(){     
+    private async generateLocations(){     
         console.log("DAG::generateLocations")
+        let locationGenPromises: Promise<void>[] = []        
         for(let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
             const locationName = this.scriptSupervisor.getSceneLocation(sceneNumber);            
             
-            generateImage(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)) //TODO: Make async            
+            locationGenPromises.push(generateImage(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)))
         }             
+
+        await Promise.all(locationGenPromises)
+        console.log("DAG::generateLocations - DONE")
     }
 
-    private generateVoicedDialoge(){
+    private async generateVoicedDialoge(){
+        console.log("DAG::generatedVoicedDialogue")
+        let voiceGenPromises: Promise<void>[] = []
         for(let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
             for(let lineNumber = 0; lineNumber < this.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++){
-                const dialogue = this.scriptSupervisor.getDialogue(sceneNumber, lineNumber);                
-                generateTTS(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)) //TODO: Make async
+                const dialogue = this.scriptSupervisor.getDialogue(sceneNumber, lineNumber);          
+                voiceGenPromises.push(generateTTS(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)))                       
             }
-        }                
+        }
+        await Promise.all(voiceGenPromises)     
+        console.log("DAG::generatedVoicedDialogue - DONE")           
     }
 
 }

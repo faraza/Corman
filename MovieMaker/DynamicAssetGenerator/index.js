@@ -28,14 +28,11 @@ class DynamicAssetGenerator {
         this.scriptSupervisor = new ScriptSupervisor_1.ScriptSupervisor();
     }
     generateAssets() {
-        console.log("DAG::generateAssets 1");
-        this.generateScript(); //TODO: Convert into promise chain
-        console.log("DAG::generateAssets 2");
-        this.generateLocations();
-        console.log("DAG::generateAssets 3");
-        this.generateVoicedDialoge();
-        console.log("DAG::generateAssets 4");
-        return this.assetManager;
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.generateScript();
+            yield Promise.all([this.generateLocations(), this.generateVoicedDialoge()]);
+            return { assetManager: this.assetManager, scriptSupervisor: this.scriptSupervisor };
+        });
     }
     generateScript() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -53,19 +50,30 @@ class DynamicAssetGenerator {
         });
     }
     generateLocations() {
-        console.log("DAG::generateLocations");
-        for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
-            const locationName = this.scriptSupervisor.getSceneLocation(sceneNumber);
-            (0, Images_1.generateImage)(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)); //TODO: Make async            
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("DAG::generateLocations");
+            let locationGenPromises = [];
+            for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
+                const locationName = this.scriptSupervisor.getSceneLocation(sceneNumber);
+                locationGenPromises.push((0, Images_1.generateImage)(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)));
+            }
+            yield Promise.all(locationGenPromises);
+            console.log("DAG::generateLocations - DONE");
+        });
     }
     generateVoicedDialoge() {
-        for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
-            for (let lineNumber = 0; lineNumber < this.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++) {
-                const dialogue = this.scriptSupervisor.getDialogue(sceneNumber, lineNumber);
-                (0, Audio_1.generateTTS)(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)); //TODO: Make async
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("DAG::generatedVoicedDialogue");
+            let voiceGenPromises = [];
+            for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
+                for (let lineNumber = 0; lineNumber < this.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++) {
+                    const dialogue = this.scriptSupervisor.getDialogue(sceneNumber, lineNumber);
+                    voiceGenPromises.push((0, Audio_1.generateTTS)(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)));
+                }
             }
-        }
+            yield Promise.all(voiceGenPromises);
+            console.log("DAG::generatedVoicedDialogue - DONE");
+        });
     }
 }
 exports.DynamicAssetGenerator = DynamicAssetGenerator;

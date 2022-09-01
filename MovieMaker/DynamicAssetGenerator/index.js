@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DynamicAssetGenerator = void 0;
 const Script_1 = require("./Script");
 const ScriptSupervisor_1 = require("../ScriptSupervisor");
+const Images_1 = require("./Images");
+const Audio_1 = require("./Audio");
+const appRoot = require('app-root-path');
 class DynamicAssetGenerator {
     /**
      * TODO: Also support user written script
@@ -10,8 +13,9 @@ class DynamicAssetGenerator {
      * @param prompt short prompt user enters
      */
     constructor(prompt) {
+        this.movieID = "001"; //TODO: Dynamically generate
         this.prompt = prompt;
-        this.assetManager = new DynamicAssetManager();
+        this.assetManager = new DynamicAssetManager(this.movieID);
         this.scriptSupervisor = new ScriptSupervisor_1.ScriptSupervisor();
     }
     generateAssets() {
@@ -22,18 +26,24 @@ class DynamicAssetGenerator {
     }
     //TODO: Make all of these properly async
     generateScript() {
-        const script = (0, Script_1.generateScript)(this.prompt);
-        this.scriptSupervisor.loadScript(script);
+        const script = (0, Script_1.generateScript)(this.prompt, this.assetManager.getScriptFilepath());
+        this.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath());
         this.assetManager.setScript(script);
     }
     generateLocations() {
         console.log("DAG::generateLocations");
-        //TODO: Call imageGenerator from IG class, passing it getAllLocations from DAM.scriptSupervisor
-        //TODO: Give location images to DAM
+        for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
+            const locationName = this.scriptSupervisor.getSceneLocation(sceneNumber);
+            (0, Images_1.generateImage)(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)); //TODO: Make async            
+        }
     }
     generateVoicedDialoge() {
-        //TODO: Call generate voices from Voice 
-        //TODO: Give audio files to DAM
+        for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
+            for (let lineNumber = 0; lineNumber < this.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++) {
+                const dialogue = this.scriptSupervisor.getDialogue(sceneNumber, lineNumber);
+                (0, Audio_1.generateTTS)(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)); //TODO: Make async
+            }
+        }
     }
 }
 exports.DynamicAssetGenerator = DynamicAssetGenerator;
@@ -42,16 +52,18 @@ exports.DynamicAssetGenerator = DynamicAssetGenerator;
  * Not really any logic going on here
  */
 class DynamicAssetManager {
-    constructor() {
+    /**
+     *
+     * @param movieID Unique identifier that describes the movie. Uses this for folder naming
+     */
+    constructor(movieID) {
         this.script = "";
-        /**
-         * For that scene number in the script, what is the location image associated with it? This will return that
-         * returns the filepath
-         * @param sceneNumber the order of the scene in the script. Each time a new location is set, that is a new scene number
-         */
+        this.movieID = "";
+        this.movieID = movieID;
     }
-    getLocationImage(sceneNumber) {
-        return "";
+    //TODO: Do we need to do file extensions?
+    getLocationImageFilepath(sceneNumber) {
+        return this.getRootFilePath() + "locations/" + sceneNumber;
     }
     /**
      *
@@ -60,8 +72,8 @@ class DynamicAssetManager {
      *
      * Returns the filepath to that piece of audio
      */
-    getRecordedDialogue(sceneNumber, lineNumber) {
-        return "";
+    getRecordedDialogueFilepath(sceneNumber, lineNumber) {
+        return this.getRootFilePath() + "dialogue/" + sceneNumber + "_" + lineNumber;
     }
     getScript() {
         return this.script;
@@ -69,10 +81,13 @@ class DynamicAssetManager {
     setScript(script) {
         this.script = script;
     }
-    setLocationImages() {
-        //TODO:
+    getScriptFilepath() {
+        return this.getRootFilePath() + "script/script";
     }
-    setVoicedDialogueFiles() {
-        //TODO: 
+    getScriptSupervisorFilepath() {
+        return this.getRootFilePath + "script/scriptSupervisor";
+    }
+    getRootFilePath() {
+        return appRoot + "/Assets/dynamic_assets/" + this.movieID + "/";
     }
 }

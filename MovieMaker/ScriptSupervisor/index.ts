@@ -32,9 +32,10 @@ export class ScriptSupervisor{
 
     /**
      * Parses the script and fills in all of the variables. NOTE - this class should not be called until you've done this!
+     * Also saves the object to disk
      * @param script 
      */
-    public loadScript(script: string){
+    public loadScript(script: string, filepath: string){
         //TODO
     }
 }
@@ -43,4 +44,9 @@ class Dialogue{
     actorName: string = ""
     lineNumber: number = 0
     words: string = ""
+
+    public getActorVoiceID(): number{ //converts actorName into ID for TTS
+        //TODO
+        return 0
+    }
 }

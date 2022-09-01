@@ -30,9 +30,10 @@ class ScriptSupervisor {
     }
     /**
      * Parses the script and fills in all of the variables. NOTE - this class should not be called until you've done this!
+     * Also saves the object to disk
      * @param script
      */
-    loadScript(script) {
+    loadScript(script, filepath) {
         //TODO
     }
 }
@@ -42,5 +43,9 @@ class Dialogue {
         this.actorName = "";
         this.lineNumber = 0;
         this.words = "";
+    }
+    getActorVoiceID() {
+        //TODO
+        return 0;
     }
 }

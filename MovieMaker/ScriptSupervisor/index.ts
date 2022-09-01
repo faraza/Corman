@@ -30,7 +30,11 @@ export class ScriptSupervisor{
         return 0
     }
 
-    private parseScript(script: string){
+    /**
+     * Parses the script and fills in all of the variables. NOTE - this class should not be called until you've done this!
+     * @param script 
+     */
+    public loadScript(script: string){
         //TODO
     }
 }

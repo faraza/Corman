@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DynamicAssetGenerator = void 0;
-const Script = require('./Script');
-const ScriptSupervisor = require('../ScriptSupervisor');
+const Script_1 = require("./Script");
+const ScriptSupervisor_1 = require("../ScriptSupervisor");
 class DynamicAssetGenerator {
     /**
      * TODO: Also support user written script
@@ -10,9 +10,9 @@ class DynamicAssetGenerator {
      * @param prompt short prompt user enters
      */
     constructor(prompt) {
-        this.assetManager = new DynamicAssetManager; //TODO: Figure out type bs
-        this.scriptSupervisor = new ScriptSupervisor; //TODO: Figure out type bs
         this.prompt = prompt;
+        this.assetManager = new DynamicAssetManager();
+        this.scriptSupervisor = new ScriptSupervisor_1.ScriptSupervisor();
     }
     generateAssets() {
         this.generateScript(); //TODO: Convert into promise chain
@@ -22,15 +22,12 @@ class DynamicAssetGenerator {
     }
     //TODO: Make all of these properly async
     generateScript() {
-        const script = Script.generateScript(prompt);
-        this.scriptSupervisor.setScript(script);
+        const script = (0, Script_1.generateScript)(this.prompt);
+        this.scriptSupervisor.loadScript(script);
         this.assetManager.setScript(script);
     }
     generateLocations() {
         console.log("DAG::generateLocations");
-        for (let i = 0; i < this.scriptSupervisor.blah; i++) {
-            //TODO
-        }
         //TODO: Call imageGenerator from IG class, passing it getAllLocations from DAM.scriptSupervisor
         //TODO: Give location images to DAM
     }

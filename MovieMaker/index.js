@@ -8,7 +8,9 @@
  *
  * Keep things clean and simple here. Most of the logic should take place within the relevant classes in those folders.
  */
-const DynamicAssetGenerator = require('./DynamicAssetGenerator');
+Object.defineProperty(exports, "__esModule", { value: true });
+// const DynamicAssetGenerator = require('./DynamicAssetGenerator')
+const DynamicAssetGenerator_1 = require("./DynamicAssetGenerator");
 /**
  * Calls entire pipeline
  * @returns path to movie video file
@@ -16,7 +18,7 @@ const DynamicAssetGenerator = require('./DynamicAssetGenerator');
  */
 exports.makeMovieFromPrompt = (prompt) => {
     console.log("MovieMaker::makeMovieFromPrompt 2: ", prompt);
-    const dag = new DynamicAssetGenerator(prompt);
+    const dag = new DynamicAssetGenerator_1.DynamicAssetGenerator(prompt);
     dag.generateAssets();
     //TODO: Feed results of generator to director
     //TODO: Run director. Pass video file result back

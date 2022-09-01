@@ -1,12 +1,11 @@
 
-const Script = require('./Script')
-const ScriptSupervisor = require('../ScriptSupervisor')
+import { generateScript } from "./Script";
+import { ScriptSupervisor } from "../ScriptSupervisor";
 
 export class DynamicAssetGenerator{
     private prompt: string
-    private assetManager = new DynamicAssetManager //TODO: Figure out type bs
-    private scriptSupervisor = new ScriptSupervisor //TODO: Figure out type bs
-    
+    private assetManager: DynamicAssetManager
+    private scriptSupervisor: ScriptSupervisor        
 
     /**
      * TODO: Also support user written script
@@ -15,9 +14,11 @@ export class DynamicAssetGenerator{
      */
     public constructor(prompt: string){ //TODO: Can you make a constructor async? If so, that's what we should do so scriptSupervisor can always be initialized
         this.prompt = prompt
+        this.assetManager = new DynamicAssetManager()
+        this.scriptSupervisor = new ScriptSupervisor()
     }
     
-    public generateAssets(): DynamicAssetManager{ //TODO: Return Tuple of DAM and ScriptSupervisor    
+    public generateAssets(){ //TODO: Return Tuple of DAM and ScriptSupervisor    
         this.generateScript(); //TODO: Convert into promise chain
         this.generateLocations();
         this.generateVoicedDialoge();
@@ -27,10 +28,9 @@ export class DynamicAssetGenerator{
 
     //TODO: Make all of these properly async
     private generateScript(){
-        const script = Script.generateScript(prompt)        
-        this.scriptSupervisor.setScript(script)
-        this.assetManager.setScript(script)
-        
+        const script = generateScript(this.prompt)        
+        this.scriptSupervisor.loadScript(script)
+        this.assetManager.setScript(script)        
     }
 
     private generateLocations(){     
@@ -53,7 +53,7 @@ export class DynamicAssetGenerator{
  * Not really any logic going on here
  */
 class DynamicAssetManager{  
-    private script = ""      
+    private script: string = ""      
 
     public getLocationImage(sceneNumber: number): string{
         return ""

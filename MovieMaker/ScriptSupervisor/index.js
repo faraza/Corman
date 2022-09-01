@@ -28,7 +28,11 @@ class ScriptSupervisor {
         //TODO
         return 0;
     }
-    parseScript(script) {
+    /**
+     * Parses the script and fills in all of the variables. NOTE - this class should not be called until you've done this!
+     * @param script
+     */
+    loadScript(script) {
         //TODO
     }
 }

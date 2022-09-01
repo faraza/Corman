@@ -1,10 +1,5 @@
-import { testBasicImageGen, testCharacterMouthAnimation } from "./ImageAndAnimation"
+const MovieMaker = require('./MovieMaker')
 
-const hello = "hello"
+//TODO: Setup server and routing. Make calls based on that
 
-const addWorldToString = (input: string): string=>{
-    return (input + " world!")
-}
-
-console.log(addWorldToString(hello))
-testCharacterMouthAnimation()
+MovieMaker.makeMovieFromPrompt("A king who wants to go the stars.")

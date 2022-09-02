@@ -9,12 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DynamicAssetGenerator = void 0;
+exports.DynamicAssetManager = exports.DynamicAssetGenerator = void 0;
 const Script_1 = require("./Script");
 const ScriptSupervisor_1 = require("../ScriptSupervisor");
 const Images_1 = require("./Images");
 const Audio_1 = require("./Audio");
 const appRoot = require('app-root-path');
+/**
+ * TODO: No need for this to be a class. Just break it down into functions
+ */
 class DynamicAssetGenerator {
     /**
      * TODO: Also support user written script
@@ -25,13 +28,12 @@ class DynamicAssetGenerator {
         this.movieID = "001"; //TODO: Dynamically generate
         this.prompt = prompt;
         this.assetManager = new DynamicAssetManager(this.movieID);
-        this.scriptSupervisor = new ScriptSupervisor_1.ScriptSupervisor();
     }
     generateAssets() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.generateScript();
             yield Promise.all([this.generateLocations(), this.generateVoicedDialoge()]);
-            return { assetManager: this.assetManager, scriptSupervisor: this.scriptSupervisor };
+            this.assetManager;
         });
     }
     generateScript() {
@@ -40,7 +42,7 @@ class DynamicAssetGenerator {
                 console.log("DAG::generateScript 1");
                 const script = yield (0, Script_1.generateScript)(this.prompt, this.assetManager.getScriptFilepath());
                 console.log("DAG::generateScript 2");
-                this.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath());
+                this.assetManager.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath());
                 this.assetManager.setScript(script);
                 console.log("DAG::generateScript 3");
             }
@@ -53,8 +55,8 @@ class DynamicAssetGenerator {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("DAG::generateLocations");
             let locationGenPromises = [];
-            for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
-                const locationName = this.scriptSupervisor.getSceneLocation(sceneNumber);
+            for (let sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
+                const locationName = this.assetManager.scriptSupervisor.getSceneLocation(sceneNumber);
                 locationGenPromises.push((0, Images_1.generateImage)(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)));
             }
             yield Promise.all(locationGenPromises);
@@ -65,9 +67,9 @@ class DynamicAssetGenerator {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("DAG::generatedVoicedDialogue");
             let voiceGenPromises = [];
-            for (let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
-                for (let lineNumber = 0; lineNumber < this.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++) {
-                    const dialogue = this.scriptSupervisor.getDialogue(sceneNumber, lineNumber);
+            for (let sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
+                for (let lineNumber = 0; lineNumber < this.assetManager.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++) {
+                    const dialogue = this.assetManager.scriptSupervisor.getDialogue(sceneNumber, lineNumber);
                     voiceGenPromises.push((0, Audio_1.generateTTS)(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)));
                 }
             }
@@ -90,6 +92,7 @@ class DynamicAssetManager {
         this.script = "";
         this.movieID = "";
         this.movieID = movieID;
+        this.scriptSupervisor = new ScriptSupervisor_1.ScriptSupervisor();
     }
     //TODO: Do we need to do file extensions?
     getLocationImageFilepath(sceneNumber) {
@@ -121,3 +124,4 @@ class DynamicAssetManager {
         return appRoot + "/Assets/dynamic_assets/" + this.movieID + "/";
     }
 }
+exports.DynamicAssetManager = DynamicAssetManager;

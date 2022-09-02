@@ -5,6 +5,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScriptSupervisor = void 0;
+//TODO: Make constructor require script 
 class ScriptSupervisor {
     /**
      * Returns Dialogue object
@@ -30,7 +31,7 @@ class ScriptSupervisor {
     }
     /**
      * Parses the script and fills in all of the variables. NOTE - this class should not be called until you've done this!
-     * Also saves the object to disk
+     * Also saves the ScriptSupervisor object to disk for debugging
      * @param script
      */
     loadScript(script, filepath) {

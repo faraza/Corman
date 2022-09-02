@@ -3,6 +3,7 @@
  * It gets locations, dialogue
  */
 
+//TODO: Make constructor require script 
 export class ScriptSupervisor{    
     /**
      * Returns Dialogue object
@@ -32,7 +33,7 @@ export class ScriptSupervisor{
 
     /**
      * Parses the script and fills in all of the variables. NOTE - this class should not be called until you've done this!
-     * Also saves the object to disk
+     * Also saves the ScriptSupervisor object to disk for debugging
      * @param script 
      */
     public loadScript(script: string, filepath: string){

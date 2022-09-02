@@ -6,11 +6,13 @@ import { generateTTS } from "./Audio";
 const appRoot = require('app-root-path');
 
 
+/**
+ * TODO: No need for this to be a class. Just break it down into functions
+ */
 export class DynamicAssetGenerator{
     private prompt: string
     private movieID: string = "001" //TODO: Dynamically generate
-    private assetManager: DynamicAssetManager
-    private scriptSupervisor: ScriptSupervisor        
+    private assetManager: DynamicAssetManager    
 
     /**
      * TODO: Also support user written script
@@ -19,15 +21,14 @@ export class DynamicAssetGenerator{
      */
     public constructor(prompt: string){
         this.prompt = prompt
-        this.assetManager = new DynamicAssetManager(this.movieID)
-        this.scriptSupervisor = new ScriptSupervisor()
+        this.assetManager = new DynamicAssetManager(this.movieID)        
     }
     
     public async generateAssets(){ //TODO: Return Tuple of DAM and ScriptSupervisor            
         await this.generateScript()
         await Promise.all([this.generateLocations(), this.generateVoicedDialoge()])                
 
-        return {assetManager: this.assetManager, scriptSupervisor: this.scriptSupervisor}
+        this.assetManager
     }
     
     private async generateScript(){
@@ -35,7 +36,7 @@ export class DynamicAssetGenerator{
             console.log("DAG::generateScript 1")
             const script = await generateScript(this.prompt, this.assetManager.getScriptFilepath())        
             console.log("DAG::generateScript 2")
-            this.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath())
+            this.assetManager.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath())
             this.assetManager.setScript(script)        
             console.log("DAG::generateScript 3")
         }
@@ -47,8 +48,8 @@ export class DynamicAssetGenerator{
     private async generateLocations(){     
         console.log("DAG::generateLocations")
         let locationGenPromises: Promise<void>[] = []        
-        for(let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
-            const locationName = this.scriptSupervisor.getSceneLocation(sceneNumber);            
+        for(let sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
+            const locationName = this.assetManager.scriptSupervisor.getSceneLocation(sceneNumber);            
             
             locationGenPromises.push(generateImage(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)))
         }             
@@ -60,9 +61,9 @@ export class DynamicAssetGenerator{
     private async generateVoicedDialoge(){
         console.log("DAG::generatedVoicedDialogue")
         let voiceGenPromises: Promise<void>[] = []
-        for(let sceneNumber = 0; sceneNumber < this.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
-            for(let lineNumber = 0; lineNumber < this.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++){
-                const dialogue = this.scriptSupervisor.getDialogue(sceneNumber, lineNumber);          
+        for(let sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
+            for(let lineNumber = 0; lineNumber < this.assetManager.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++){
+                const dialogue = this.assetManager.scriptSupervisor.getDialogue(sceneNumber, lineNumber);          
                 voiceGenPromises.push(generateTTS(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)))                       
             }
         }
@@ -76,9 +77,11 @@ export class DynamicAssetGenerator{
  * This class just stores all the stuff that's generated and gives convenient functions for accessing them.
  * Not really any logic going on here
  */
-class DynamicAssetManager{  
+export class DynamicAssetManager{  
+    public scriptSupervisor: ScriptSupervisor
+    
     private script: string = ""      
-    private movieID: string = ""
+    private movieID: string = ""    
 
     /**
      * 
@@ -86,6 +89,7 @@ class DynamicAssetManager{
      */
     public constructor(movieID: string){
         this.movieID = movieID
+        this.scriptSupervisor = new ScriptSupervisor()
     }
     
     //TODO: Do we need to do file extensions?

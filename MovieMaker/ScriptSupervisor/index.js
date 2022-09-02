@@ -1,7 +1,7 @@
 "use strict";
 /**
- * This class takes a written script and parses out all the relevant information.
- * It gets locations, dialogue
+ * This class takes a written script and parses out all the relevant information and gives easy access to it for other classes
+ * E.g. what are the locations, dialogueLines, etc
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScriptSupervisor = void 0;
@@ -41,7 +41,7 @@ class ScriptSupervisor {
 exports.ScriptSupervisor = ScriptSupervisor;
 class Dialogue {
     constructor() {
-        this.actorName = "";
+        this.actorID = ""; //TODO: 
         this.lineNumber = 0;
         this.words = "";
     }

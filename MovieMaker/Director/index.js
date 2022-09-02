@@ -11,26 +11,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMovie = void 0;
 const AudioTimeline_1 = require("./AudioTimeline");
+const VideoTimeline_1 = require("./VideoTimeline");
 /**
  * Creates the full movie from all assets, making choices about shot selection
  */
 function createMovie(assets) {
     return __awaiter(this, void 0, void 0, function* () {
         const audioTimeline = (0, AudioTimeline_1.createAudioTimeline)(assets);
-        const videoTimeline = createVideoTimeline(assets, audioTimeline);
-        return yield constructMovie(audioTimeline, videoTimeline);
+        const videoTimeline = (0, VideoTimeline_1.createVideoTimeline)(assets, audioTimeline);
+        return yield constructMovie(audioTimeline, videoTimeline, assets);
     });
 }
 exports.createMovie = createMovie;
-function createVideoTimeline(assets, audioTimeline) {
-    //TODO: Decide shots
-    //TODO: Animate 
-    const timeline = new VideoTimeline();
-    return timeline;
-}
-function constructMovie(audioTimeline, videoTimeline) {
+function constructMovie(audioTimeline, videoTimeline, assets) {
     return __awaiter(this, void 0, void 0, function* () {
+        yield animateVideoTimeline(videoTimeline, assets);
+        yield addAudioToAnimatedVideo(audioTimeline, assets);
     });
 }
-class VideoTimeline {
+function animateVideoTimeline(videoTimeline, assets) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO: Filepaths?
+        //TODO: We're going to need to refactor and unify a bunch of types for this to be clean. Once we do that, actually doing the animation should be easy
+        //Each shot in the video timeline needs to tell us ActiveSpeaker and shot location
+        //We also don't want to regen the shot background everytime, so we should have a step that just does that once
+    });
+}
+function addAudioToAnimatedVideo(audioTimeline, assets) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO: Filepaths?
+    });
 }

@@ -18,23 +18,19 @@ export class AudioTimeline{
     curTimelineLength: number = 0
 
     addDialogueToEnd(filePath: string, audioLength: number, sceneNumber: number){
-        const dialogue = new RecordedDialogue(this.curTimelineLength, this.curTimelineLength + audioLength, filePath, sceneNumber)
+        const dialogue: RecordedDialogue = {startTime: this.curTimelineLength, endTime: this.curTimelineLength + audioLength, 
+            filePath: filePath, sceneNumber: sceneNumber, speakingActorID: 0}   //TODO: Actually include speaking actor
         this.dialogueTrack.push(dialogue)
         this.curTimelineLength += audioLength
     }
 }
 
-class RecordedDialogue{
+export type RecordedDialogue = {
     startTime: number
     endTime: number
     filePath: string
     sceneNumber: number
-    //TODO: Add support for blank audio
-
-    constructor(startTime: number, endTime: number, filePath: string, sceneNumber: number){
-        this.startTime = startTime
-        this.endTime = endTime
-        this.filePath = filePath
-        this.sceneNumber = sceneNumber
-    }    
+    speakingActorID: number
+    //TODO: Add support for blank audio    
+    //TODO: Say who the actor is
 }

@@ -1,6 +1,6 @@
 /**
- * This class takes a written script and parses out all the relevant information.
- * It gets locations, dialogue
+ * This class takes a written script and parses out all the relevant information and gives easy access to it for other classes
+ * E.g. what are the locations, dialogueLines, etc
  */
 
 //TODO: Make constructor require script 
@@ -42,7 +42,7 @@ export class ScriptSupervisor{
 }
 
 class Dialogue{
-    actorName: string = ""
+    actorID: string = "" //TODO: 
     lineNumber: number = 0
     words: string = ""
 

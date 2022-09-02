@@ -1,4 +1,4 @@
-import {RawDialogue} from './dialogue'
+import {getDummyRawDialogue, RawDialogue} from './dialogue'
 
 /**
  * This class takes a written script and parses out all the relevant information and gives easy access to it for other classes
@@ -7,6 +7,9 @@ import {RawDialogue} from './dialogue'
 
 //TODO: Make constructor require script 
 export class ScriptSupervisor{    
+    private allDialogue: RawDialogue[] = []
+    private sceneNames: string[] = []
+
     /**
      * Returns Dialogue object
      * @param sceneNumber 
@@ -14,23 +17,34 @@ export class ScriptSupervisor{
      * @returns 
      */
     public getDialogue(sceneNumber: number, lineNumber: number): RawDialogue{        
-        //TODO
-        return {actorID: 1, lineNumber: lineNumber, words: "blah blah", sceneNumber: sceneNumber}
+        this.allDialogue.forEach((dialogue)=>{
+            if(dialogue.sceneNumber === sceneNumber && dialogue.lineNumber === lineNumber)
+                return dialogue
+        })
+        
+        console.log("ERROR - ScriptSupervisor::getDialogue. Not found for scene: ", sceneNumber, " line: ", lineNumber)
+        return getDummyRawDialogue() //TODO: Throw error
     }
 
     public getSceneLocation(sceneNumber: number): string{
-        //TODO
-        return ""
+        if(sceneNumber >= this.sceneNames.length){
+            console.log("ERROR - ScriptSupervisor::getSceneLocation. Requested a scene number that is too high: ", sceneNumber, " Total scenes: ", this.sceneNames.length) //TODO: Throw error
+            return "ERROR SCENE"
+        }
+
+        return this.sceneNames[sceneNumber]
     }
 
     public getNumberOfScenes(): number{
-        //TODO
-        return 0
+        return this.sceneNames.length
     }
 
     public getNumberOfLinesOfDialogue(sceneNumber: number): number{
-        //TODO
-        return 0
+        let numberOfLines = 0
+        this.allDialogue.forEach((dialogue)=>{
+            if(dialogue.sceneNumber === sceneNumber) numberOfLines++
+        })
+        return numberOfLines
     }
 
     /**

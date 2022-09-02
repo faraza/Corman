@@ -4,7 +4,7 @@ import { ScriptSupervisor } from "../CommonClasses/scriptsupervisor";
 import { generateImage } from "./setdesigner";
 import { generateTTS } from "./voiceoverartist";
 import {v4 as uuidv4} from 'uuid'
-import { getDummyRecordedDialogue, RecordedDialogue } from "../CommonClasses/dialogue";
+import { getDummyRawDialogue, getDummyRecordedDialogue, RawDialogue, RecordedDialogue } from "../CommonClasses/dialogue";
 const appRoot = require('app-root-path');
 
 
@@ -35,6 +35,12 @@ export class DynamicAssetGenerator{
 
         await Promise.all([this.generateLocations(), this.generateVoicedDialoge()])                
         return this.assetManager
+    }
+
+    public async __generateDummyAssets(timeToGenerate: number){
+        setTimeout(()=>{
+            this.assetManager._setDummyAssets()
+        }, timeToGenerate)
     }
     
     private async generateScript({ prompt }: { prompt: string; }){
@@ -99,6 +105,17 @@ export class DynamicAssetManager{
     public constructor(movieID: string){
         this.movieID = movieID
         this.scriptSupervisor = new ScriptSupervisor()
+    }
+
+    /**
+     * Method for testing
+     */
+    public _setDummyAssets(){
+        this.movieID = "testassets1"
+        const rawDialogue: RawDialogue = getDummyRawDialogue()
+        const recordedDialogue: RecordedDialogue  = {rawDialogue: rawDialogue, filepath: "dummyFilepath", duration: 4000}
+        this.allRecordedDialogue = [recordedDialogue]
+        this.scriptSupervisor._loadDummyAssets()
     }
     
     //TODO: Do we need to do file extensions?

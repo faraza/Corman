@@ -1,3 +1,4 @@
+import { ActorID } from './actor'
 import {getDummyRawDialogue, RawDialogue} from './dialogue'
 
 /**
@@ -12,8 +13,8 @@ export class ScriptSupervisor{
 
     /**
      * Returns Dialogue object
-     * @param sceneNumber 
-     * @param lineNumber 
+     * @param sceneNumber - 0 indexed
+     * @param lineNumber - 0 indexed
      * @returns 
      */
     public getDialogue(sceneNumber: number, lineNumber: number): RawDialogue{        
@@ -54,5 +55,11 @@ export class ScriptSupervisor{
      */
     public loadScript(script: string, filepath: string){
         //TODO
+    }
+
+    public _generateDummy(){
+        this.sceneNames = ["dummyscene"]
+        const dummyDialogue: RawDialogue = {actorID: ActorID.Jennifer, sceneNumber: 0, lineNumber: 0, words: "Dummy words"}
+        this.allDialogue = [dummyDialogue]
     }
 }

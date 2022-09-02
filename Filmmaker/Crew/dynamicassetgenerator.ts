@@ -111,11 +111,14 @@ export class DynamicAssetManager{
      * Method for testing
      */
     public _setDummyAssets(){
-        this.movieID = "testassets1"
-        const rawDialogue: RawDialogue = getDummyRawDialogue()
-        const recordedDialogue: RecordedDialogue  = {rawDialogue: rawDialogue, filepath: "dummyFilepath", duration: 4000}
-        this.allRecordedDialogue = [recordedDialogue]
-        this.scriptSupervisor._loadDummyAssets()
+        this.movieID = "testassets1"        
+        this.scriptSupervisor._generateDummy()
+        const sceneNumber = 0
+        for(let i = 0; i < this.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); i++){
+            const rawDialogue = this.scriptSupervisor.getDialogue(sceneNumber, i)
+            const recordedDialogue: RecordedDialogue  = {rawDialogue: rawDialogue, filepath: "dummyFilepath", duration: 4000}
+            this.allRecordedDialogue.push(recordedDialogue)
+        }                        
     }
     
     //TODO: Do we need to do file extensions?

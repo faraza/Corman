@@ -37,10 +37,13 @@ export class DynamicAssetGenerator{
         return this.assetManager
     }
 
-    public async __generateDummyAssets(timeToGenerate: number){
-        setTimeout(()=>{
-            this.assetManager._setDummyAssets()
-        }, timeToGenerate)
+    public async __generateDummyAssets(timeToGenerate: number): Promise<DynamicAssetManager>{
+        return new Promise((res, rej)=>{
+            setTimeout(()=>{
+                this.assetManager._setDummyAssets()
+                res(this.assetManager)
+            }, timeToGenerate)
+        })        
     }
     
     private async generateScript({ prompt }: { prompt: string; }){

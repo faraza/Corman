@@ -4,11 +4,13 @@ import {createVideoTimeline, VideoTimeline} from "./videotimeline"
 
 /**
  * Creates the full movie from all assets, making choices about shot selection
+ * Returns filepath to video
  */
-export async function createMovie(assets: DynamicAssetManager){
+export async function createMovie(assets: DynamicAssetManager): Promise<string>{
     const audioTimeline = createAudioTimeline(assets)
     const videoTimeline = createVideoTimeline(assets, audioTimeline)
-    return await animateAndMix(audioTimeline, videoTimeline, assets)
+    await animateAndMix(audioTimeline, videoTimeline, assets)
+    return "" //TODO
 }
 
 async function animateAndMix(audioTimeline: AudioTimeline, videoTimeline: VideoTimeline, assets: DynamicAssetManager){ //TODO: Rename this

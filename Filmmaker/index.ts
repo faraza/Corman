@@ -9,23 +9,21 @@
  */
 
 // const DynamicAssetGenerator = require('./DynamicAssetGenerator')
-import {DynamicAssetGenerator} from './Crew/dynamicassetgenerator'
+import {DynamicAssetGenerator, DynamicAssetManager} from './Crew/dynamicassetgenerator'
+import { createMovie } from './Postproduction';
 
 /**
  * Calls entire pipeline
  * @returns path to movie video file
  * //TODO: Should also return movieID
  */
-exports.makeMovieFromPrompt = (prompt: string): string =>{
+export async function makeMovieFromPrompt(prompt: string): Promise<string>{
     console.log("MovieMaker::makeMovieFromPrompt 2: ", prompt)    
     const dag = new DynamicAssetGenerator()
-    dag.generateAssetsFromPrompt({prompt: prompt})
-
-    //TODO: Feed results of generator to director
-    //TODO: Run director. Pass video file result back
-
-    const pathToMovieFile = ""
-    return pathToMovieFile
+    // dag.generateAssetsFromPrompt({prompt: prompt}) //TODO
+    
+    const assets: DynamicAssetManager = await dag.__generateDummyAssets(1000);
+    return await createMovie(assets)
 } 
 
 /**
@@ -35,7 +33,7 @@ exports.makeMovieFromPrompt = (prompt: string): string =>{
  * @returns path to movie video file
  * //TODO: Should also return movieID
  */
-exports.makeMovieFromScript = (script: string, movieID: string): string=>{
+export async function makeMovieFromScript(script: string, movieID: string): Promise<string>{
     //TODO
 
     const pathToMovieFile = ""

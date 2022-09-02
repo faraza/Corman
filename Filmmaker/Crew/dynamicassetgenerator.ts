@@ -4,6 +4,7 @@ import { ScriptSupervisor } from "../CommonClasses/scriptsupervisor";
 import { generateImage } from "./setdesigner";
 import { generateTTS } from "./voiceoverartist";
 import {v4 as uuidv4} from 'uuid'
+import { getDummyRecordedDialogue, RecordedDialogue } from "../CommonClasses/dialogue";
 const appRoot = require('app-root-path');
 
 
@@ -65,17 +66,17 @@ export class DynamicAssetGenerator{
 
     private async generateVoicedDialoge(){
         console.log("DAG::generatedVoicedDialogue")
-        let voiceGenPromises: Promise<void>[] = []
+        let voiceGenPromises: Promise<RecordedDialogue>[] = []
         for(let sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
             for(let lineNumber = 0; lineNumber < this.assetManager.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++){
                 const dialogue = this.assetManager.scriptSupervisor.getDialogue(sceneNumber, lineNumber);          
                 voiceGenPromises.push(generateTTS(dialogue, this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)))                       
             }
         }
-        await Promise.all(voiceGenPromises)     
+        const allRecordedDialogue = await Promise.all(voiceGenPromises)     
+        this.assetManager.setAllRecordedDialogue(allRecordedDialogue)
         console.log("DAG::generatedVoicedDialogue - DONE")           
-    }
-
+    }    
 }
 
 /**
@@ -86,9 +87,10 @@ export class DynamicAssetManager{
     public scriptSupervisor: ScriptSupervisor
     public prompt?: string
     
+    
     private script: string = ""      
     private movieID: string = ""    
-
+    private allRecordedDialogue: RecordedDialogue[] = []
 
     /**
      * 
@@ -114,6 +116,19 @@ export class DynamicAssetManager{
      */
     public getRecordedDialogueFilepath(sceneNumber: number, lineNumber: number): string{
         return this.getRootFilePath() + "dialogue/" + sceneNumber + "_" + lineNumber
+    }
+
+    public setAllRecordedDialogue(allRecordedDialogue: RecordedDialogue[]){
+        this.allRecordedDialogue = allRecordedDialogue
+    }
+
+    public getRecordedDialogue(sceneNumber: number, lineNumber: number): RecordedDialogue{
+        this.allRecordedDialogue.forEach((recordedDialogue)=>{
+            if(recordedDialogue.rawDialogue.lineNumber === lineNumber && recordedDialogue.rawDialogue.sceneNumber === sceneNumber)
+                return recordedDialogue
+        })
+        console.log("ERROR -- DynamicAssetManager::getRecordedDialogue - not found. Scene Number: ", sceneNumber, " lineNumber: ", lineNumber, " Returning random")
+        return getDummyRecordedDialogue()        
     }
 
     public getScript(): string{

@@ -1,10 +1,11 @@
 import { RawDialogue, RecordedDialogue } from "../CommonClasses/dialogue"
 import { ActorID } from "../CommonClasses/actor"
 
-export async function generateTTS(dialogue: RawDialogue, fileOutputLocation: string): Promise<void>{
-    //TODO: Figure out when to add duration to RecordedDialogue. Is it right here?
-    //TODO
+export async function generateTTS(dialogue: RawDialogue, fileOutputLocation: string): Promise<RecordedDialogue>{
+    
     await _getDummyTTSFromServer()          
+    const audioDuration = 2000
+    return {rawDialogue: dialogue, filepath: fileOutputLocation, duration: audioDuration}    
 }
 
 //TODO: Batch generate TTS

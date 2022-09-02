@@ -31,3 +31,15 @@ export type TimelineAudio = {
     dialogue: RecordedDialogue | EmptyDialogue
     startTime: number        
 }
+
+export function getDummyRawDialogue(): RawDialogue{
+    return {actorID: ActorID.Sarah, sceneNumber: 1, lineNumber: 1, words: "dummy words"}
+}
+
+export function getDummyRecordedDialogue(): RecordedDialogue{
+    return {
+        rawDialogue: getDummyRawDialogue(),
+        filepath: "dummyfilePath",
+        duration: 1234
+    }
+}

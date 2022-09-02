@@ -1,6 +1,6 @@
-import { DynamicAssetManager } from "../DynamicAssetGenerator";
-import { createAudioTimeline, AudioTimeline} from "./AudioTimeline";
-import {createVideoTimeline, VideoTimeline} from "./VideoTimeline"
+import { DynamicAssetManager } from "../Crew/dynamicassetgenerator";
+import { createAudioTimeline, AudioTimeline} from "./audiotimeline";
+import {createVideoTimeline, VideoTimeline} from "./videotimeline"
 
 /**
  * Creates the full movie from all assets, making choices about shot selection
@@ -8,10 +8,10 @@ import {createVideoTimeline, VideoTimeline} from "./VideoTimeline"
 export async function createMovie(assets: DynamicAssetManager){
     const audioTimeline = createAudioTimeline(assets)
     const videoTimeline = createVideoTimeline(assets, audioTimeline)
-    return await constructMovie(audioTimeline, videoTimeline, assets)
+    return await animateAndMix(audioTimeline, videoTimeline, assets)
 }
 
-async function constructMovie(audioTimeline: AudioTimeline, videoTimeline: VideoTimeline, assets: DynamicAssetManager){
+async function animateAndMix(audioTimeline: AudioTimeline, videoTimeline: VideoTimeline, assets: DynamicAssetManager){ //TODO: Rename this
     await animateVideoTimeline(videoTimeline, assets)
     await addAudioToAnimatedVideo(audioTimeline, assets)
 }

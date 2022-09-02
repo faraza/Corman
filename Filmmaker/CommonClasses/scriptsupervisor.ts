@@ -1,3 +1,5 @@
+import {RawDialogue} from './dialogue'
+
 /**
  * This class takes a written script and parses out all the relevant information and gives easy access to it for other classes
  * E.g. what are the locations, dialogueLines, etc
@@ -11,9 +13,9 @@ export class ScriptSupervisor{
      * @param lineNumber 
      * @returns 
      */
-    public getDialogue(sceneNumber: number, lineNumber: number): Dialogue{        
+    public getDialogue(sceneNumber: number, lineNumber: number): RawDialogue{        
         //TODO
-        return new Dialogue()
+        return {actorID: 1, lineNumber: lineNumber, words: "blah blah", sceneNumber: sceneNumber}
     }
 
     public getSceneLocation(sceneNumber: number): string{
@@ -38,16 +40,5 @@ export class ScriptSupervisor{
      */
     public loadScript(script: string, filepath: string){
         //TODO
-    }
-}
-
-class Dialogue{
-    actorID: string = "" //TODO: 
-    lineNumber: number = 0
-    words: string = ""
-
-    public getActorVoiceID(): number{ //converts actorName into ID for TTS
-        //TODO
-        return 0
     }
 }

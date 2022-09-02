@@ -9,7 +9,7 @@
  */
 
 // const DynamicAssetGenerator = require('./DynamicAssetGenerator')
-import {DynamicAssetGenerator} from './DynamicAssetGenerator'
+import {DynamicAssetGenerator} from './Crew/dynamicassetgenerator'
 
 /**
  * Calls entire pipeline

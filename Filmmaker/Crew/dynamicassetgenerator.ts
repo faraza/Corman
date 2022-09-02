@@ -1,8 +1,9 @@
 
-import { generateScript } from "./Script";
-import { ScriptSupervisor } from "../ScriptSupervisor";
-import { generateImage } from "./Images";
-import { generateTTS } from "./Audio";
+import { generateScript } from "./screenwriter";
+import { ScriptSupervisor } from "../CommonClasses/scriptsupervisor";
+import { generateImage } from "./setdesigner";
+import { generateTTS } from "./voiceoverartist";
+import {v4 as uuidv4} from 'uuid'
 const appRoot = require('app-root-path');
 
 
@@ -10,8 +11,7 @@ const appRoot = require('app-root-path');
  * TODO: No need for this to be a class. Just break it down into functions
  */
 export class DynamicAssetGenerator{
-    private prompt: string
-    private movieID: string = "001" //TODO: Dynamically generate
+    private movieID: string
     private assetManager: DynamicAssetManager    
 
     /**
@@ -19,25 +19,30 @@ export class DynamicAssetGenerator{
      * TODO: Also include movieID so we don't have to rebuild certain assets
      * @param prompt short prompt user enters
      */
-    public constructor(prompt: string){
-        this.prompt = prompt
-        this.assetManager = new DynamicAssetManager(this.movieID)        
+    public constructor(){        
+        this.movieID = uuidv4() + Date.now()
+        this.assetManager = new DynamicAssetManager(this.movieID)                
     }
     
-    public async generateAssets(){ //TODO: Return Tuple of DAM and ScriptSupervisor            
-        await this.generateScript()
-        await Promise.all([this.generateLocations(), this.generateVoicedDialoge()])                
+    public async generateAssetsFromPrompt({ prompt }: { prompt: string; }){
+        await this.generateScript({ prompt })
+        return this.generateAssetsFromScript({ script: this.assetManager.getScript() })
+    }
 
-        this.assetManager
+    public async generateAssetsFromScript({ script }: { script: string; }){
+        this.assetManager.setScript(script)
+
+        await Promise.all([this.generateLocations(), this.generateVoicedDialoge()])                
+        return this.assetManager
     }
     
-    private async generateScript(){
-        try{
+    private async generateScript({ prompt }: { prompt: string; }){
+        try{            
+            this.assetManager.prompt = prompt 
             console.log("DAG::generateScript 1")
-            const script = await generateScript(this.prompt, this.assetManager.getScriptFilepath())        
-            console.log("DAG::generateScript 2")
-            this.assetManager.scriptSupervisor.loadScript(script, this.assetManager.getScriptSupervisorFilepath())
-            this.assetManager.setScript(script)        
+            const script = await generateScript(prompt, this.assetManager.getScriptFilepath())        
+            console.log("DAG::generateScript 2")                        
+            this.assetManager.setScript(script)                   
             console.log("DAG::generateScript 3")
         }
         catch(error){
@@ -64,7 +69,7 @@ export class DynamicAssetGenerator{
         for(let sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++){
             for(let lineNumber = 0; lineNumber < this.assetManager.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++){
                 const dialogue = this.assetManager.scriptSupervisor.getDialogue(sceneNumber, lineNumber);          
-                voiceGenPromises.push(generateTTS(dialogue.words, dialogue.getActorVoiceID(), this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)))                       
+                voiceGenPromises.push(generateTTS(dialogue, this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)))                       
             }
         }
         await Promise.all(voiceGenPromises)     
@@ -79,9 +84,11 @@ export class DynamicAssetGenerator{
  */
 export class DynamicAssetManager{  
     public scriptSupervisor: ScriptSupervisor
+    public prompt?: string
     
     private script: string = ""      
     private movieID: string = ""    
+
 
     /**
      * 
@@ -111,10 +118,10 @@ export class DynamicAssetManager{
 
     public getScript(): string{
         return this.script
-    }
-    
+    }    
     
     public setScript(script: string){
+        this.scriptSupervisor.loadScript(script, this.getScriptSupervisorFilepath())
         this.script = script
     }
 

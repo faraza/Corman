@@ -1,5 +1,5 @@
-import { DynamicAssetManager } from "../../DynamicAssetGenerator";
-import { createAudioTimeline, AudioTimeline, RecordedDialogue} from "../AudioTimeline";
+import { DynamicAssetManager } from "../DynamicAssetGenerator";
+import { createAudioTimeline, AudioTimeline, RecordedDialogue} from "./audiotimeline";
 
 export function createVideoTimeline(assets: DynamicAssetManager, audioTimeline: AudioTimeline): VideoTimeline{
     const videoTimeline = new VideoTimeline()

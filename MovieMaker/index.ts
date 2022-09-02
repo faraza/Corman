@@ -18,8 +18,8 @@ import {DynamicAssetGenerator} from './DynamicAssetGenerator'
  */
 exports.makeMovieFromPrompt = (prompt: string): string =>{
     console.log("MovieMaker::makeMovieFromPrompt 2: ", prompt)    
-    const dag = new DynamicAssetGenerator(prompt)
-    dag.generateAssets()
+    const dag = new DynamicAssetGenerator()
+    dag.generateAssetsFromPrompt({prompt: prompt})
 
     //TODO: Feed results of generator to director
     //TODO: Run director. Pass video file result back

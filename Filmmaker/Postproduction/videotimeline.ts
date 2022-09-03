@@ -37,12 +37,11 @@ export class VideoTimeline{
 }
 
 export enum ShotType{
-    OTS_activeSpeaker = 0, //OTS w/ active speaker facing us + inactive speaker's back to us    
-    wideshot = 1,
-    closeup_activeSpeaker = 2,
-    OTS_inactiveSpeaker = 3,
-    closeup_inactiveSpeaker = 4,
-    _reverseBGShot = -1000 //TODO: Placeholder while we figure this out
+    wideshot = 0,
+    OTS_primaryActor = 1, //Primary actor is the focus of the shot w/ ; Primary actor is defined at the start and never changes. It IS NOT NECESSARILY the speaker    
+    closeup_primaryActor = 2,    
+    OTS_secondaryActor = 3,
+    closeup_secondaryActor = 4    
 }
 
 /**
@@ -60,5 +59,5 @@ export type CameraShot = {
 }
 
 function pickShot(): ShotType{        
-    return Math.random()*3 //TODO: Set shot based on heuristics
+    return Math.random()*4 //TODO: Set shot based on heuristics
 }

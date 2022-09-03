@@ -33,13 +33,12 @@ class VideoTimeline {
 exports.VideoTimeline = VideoTimeline;
 var ShotType;
 (function (ShotType) {
-    ShotType[ShotType["OTS_activeSpeaker"] = 0] = "OTS_activeSpeaker";
-    ShotType[ShotType["wideshot"] = 1] = "wideshot";
-    ShotType[ShotType["closeup_activeSpeaker"] = 2] = "closeup_activeSpeaker";
-    ShotType[ShotType["OTS_inactiveSpeaker"] = 3] = "OTS_inactiveSpeaker";
-    ShotType[ShotType["closeup_inactiveSpeaker"] = 4] = "closeup_inactiveSpeaker";
-    ShotType[ShotType["_reverseBGShot"] = -1000] = "_reverseBGShot"; //TODO: Placeholder while we figure this out
+    ShotType[ShotType["wideshot"] = 0] = "wideshot";
+    ShotType[ShotType["OTS_primaryActor"] = 1] = "OTS_primaryActor";
+    ShotType[ShotType["closeup_primaryActor"] = 2] = "closeup_primaryActor";
+    ShotType[ShotType["OTS_secondaryActor"] = 3] = "OTS_secondaryActor";
+    ShotType[ShotType["closeup_secondaryActor"] = 4] = "closeup_secondaryActor";
 })(ShotType = exports.ShotType || (exports.ShotType = {}));
 function pickShot() {
-    return Math.random() * 3; //TODO: Set shot based on heuristics
+    return Math.random() * 4; //TODO: Set shot based on heuristics
 }

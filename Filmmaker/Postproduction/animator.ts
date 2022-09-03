@@ -63,21 +63,34 @@ async function addCharacterToFrame(frameImage: string, characterImage: string, p
 }
 
 async function generateShotBackground(imageFile: string, shotType: ShotType, outputFile: string){     
-    if(shotType === 0){
+    if(shotType === ShotType.wideshot){ //TODO: Do some stuff w/ cropping so it looks different from OTS. But it's fine for now
         await sharp(imageFile)
-        .toFile(outputFile)
-        //TODO
-        //Do nothing
+        .blur(1)
+        .toFile(outputFile)                
     }
-    else if (shotType === ShotType._reverseBGShot){ //TODO: Shot that should be reversed
+    else if (shotType === ShotType.OTS_primaryActor){ //TODO: Shot that should be reversed
         await sharp(imageFile)
-        .flop()
+        .blur(3) //TODO: Get right param        
         .toFile(outputFile)        
     }
-    else if (shotType === ShotType.closeup_activeSpeaker){
+    else if (shotType === ShotType.OTS_secondaryActor){
         await sharp(imageFile)
-        .extract({left: 200, top: 100, width: 200, height: 200})
+        .blur(3) //TODO: Get right param
+        .flop()
+        .toFile(outputFile)
+    }
+    else if (shotType === ShotType.closeup_primaryActor){
+        await sharp(imageFile)
+        .extract({left: 200, top: 100, width: 200, height: 200}) //TODO: Figure out the right params
         .resize(512, 512)
+        .blur(5)
+        .toFile(outputFile)
+    }    
+    else if (shotType === ShotType.closeup_secondaryActor){
+        await sharp(imageFile)
+        .extract({left: 50, top: 100, width: 200, height: 200}) //TODO: Figure out the right params        
+        .resize(512, 512)
+        .blur(5)
         .toFile(outputFile)
     }    
 }
@@ -131,23 +144,23 @@ async function _testAddCharToFrame(){
 }
 
 async function _testGenerateShot(){
-    const image1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
-    const shot1: ShotType = 0
-    const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/rawshotbackground_OTS.png"
-    
-    generateShotBackground(image1, shot1, out1)
+    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
+    const outbase = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/rawshotbackground"
+            
+    const out1 = outbase + "_OTSPrimary.png"
+    generateShotBackground(backgroundImage, ShotType.OTS_primaryActor, out1)
 
-    const image2 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
-    const shot2: ShotType = ShotType._reverseBGShot
-    const out2 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/rawshotbackground_Reversed.png"
+    const out2 = outbase + "_OTSSecondary.png"
+    generateShotBackground(backgroundImage, ShotType.OTS_secondaryActor, out2)
 
-    generateShotBackground(image2, shot2, out2)
+    const out3 = outbase + "_closeupPrimary.png"
+    generateShotBackground(backgroundImage, ShotType.closeup_primaryActor, out3)
 
-    const image3 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
-    const shot3: ShotType = 2
-    const out3 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/rawshotbackground_Close.png"
+    const out4 = outbase + "_closeupSecondary.png"
+    generateShotBackground(backgroundImage, ShotType.closeup_secondaryActor, out4)
 
-    generateShotBackground(image3, shot3, out3)
+    const out5 = outbase + "_wideshot.png"
+    generateShotBackground(backgroundImage, ShotType.wideshot, out5)
 }
 
 type CharacterPosition = {

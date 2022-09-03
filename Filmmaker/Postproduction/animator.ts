@@ -1,7 +1,7 @@
 import sharp from 'sharp'
 import fs from 'fs'
 import appRoot from 'app-root-path';
-import { CameraShot, VideoTimeline } from './videotimeline';
+import { CameraShot, VideoTimeline, ShotType } from './videotimeline';
 import { DynamicAssetManager } from '../Crew/dynamicassetgenerator';
 import { ActorID } from '../CommonClasses/actor';
 
@@ -47,29 +47,39 @@ async function animateShot(camerashot: CameraShot){
                 
         //TODO: Create file folder if it doesn't exist
         
-        const frameImageLocation = ""
-        // addCharacterToFrame(curMouthPosition, fileoutputlocation)
+        const frameImageLocation = ""        
     }
-}
-
-/**
- * TODO: Also include emotion
- * @param actorID 
- * @param isPrimary irrelevant for wideshot, but for OTS this is the character who is facing us. Usually the speaking character.
- */
-function getCharacterDirectory(cameraShot: CameraShot, isPrimary: boolean){
-    return "" //TODO
 }
 
 //Assumes that the static image (cut + blurred background, static character) has already been generated
     //TODO: Character directory should be the directory for the character in that shot. It should factor in the character's size and whether or not the character is in motion
     //TODO: Remember to make all directories before calling these
-async function addCharToFrame(frameImage: string, characterImage: string, position: CharacterPosition, outputFile: string ){     
+async function addCharacterToFrame(frameImage: string, characterImage: string, position: CharacterPosition, outputFile: string ){     
     await sharp(frameImage)
     .composite([
         {input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft} 
     ])
     .toFile(outputFile)
+}
+
+async function generateShotBackground(imageFile: string, shotType: ShotType, outputFile: string){     
+    if(shotType === 0){
+        await sharp(imageFile)
+        .toFile(outputFile)
+        //TODO
+        //Do nothing
+    }
+    else if (shotType === ShotType._reverseBGShot){ //TODO: Shot that should be reversed
+        await sharp(imageFile)
+        .flop()
+        .toFile(outputFile)        
+    }
+    else if (shotType === ShotType.closeup_activeSpeaker){
+        await sharp(imageFile)
+        .extract({left: 200, top: 100, width: 200, height: 200})
+        .resize(512, 512)
+        .toFile(outputFile)
+    }    
 }
 
 class AnimationFileManager{
@@ -108,7 +118,7 @@ async function _testAddCharToFrame(){
     const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png"
     const position_int: CharacterPosition = {distanceFromTop: 100, distanceFromLeft: 10}
     const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png"
-    await addCharToFrame(frame_int, charImage_int, position_int, output_int)
+    await addCharacterToFrame(frame_int, charImage_int, position_int, output_int)
 
 
     //Actual frame
@@ -117,7 +127,27 @@ async function _testAddCharToFrame(){
     const position_actual: CharacterPosition = {distanceFromTop: 160, distanceFromLeft: 300}
     const outputFile_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/frame1.png"
 
-    addCharToFrame(frameImage_actual, characterImage_actual, position_actual, outputFile_actual)
+    addCharacterToFrame(frameImage_actual, characterImage_actual, position_actual, outputFile_actual)
+}
+
+async function _testGenerateShot(){
+    const image1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
+    const shot1: ShotType = 0
+    const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/rawshotbackground_OTS.png"
+    
+    generateShotBackground(image1, shot1, out1)
+
+    const image2 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
+    const shot2: ShotType = ShotType._reverseBGShot
+    const out2 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/rawshotbackground_Reversed.png"
+
+    generateShotBackground(image2, shot2, out2)
+
+    const image3 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
+    const shot3: ShotType = 2
+    const out3 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/rawshotbackground_Close.png"
+
+    generateShotBackground(image3, shot3, out3)
 }
 
 type CharacterPosition = {
@@ -125,4 +155,4 @@ type CharacterPosition = {
     distanceFromTop: number 
 }
 
-_testAddCharToFrame()
+_testGenerateShot()

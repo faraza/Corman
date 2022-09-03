@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VideoTimeline = exports.createVideoTimeline = void 0;
+exports.ShotType = exports.VideoTimeline = exports.createVideoTimeline = void 0;
 const dialogue_1 = require("../CommonClasses/dialogue");
 function createVideoTimeline(assets, audioTimeline) {
     const videoTimeline = new VideoTimeline();
@@ -38,7 +38,8 @@ var ShotType;
     ShotType[ShotType["closeup_activeSpeaker"] = 2] = "closeup_activeSpeaker";
     ShotType[ShotType["OTS_inactiveSpeaker"] = 3] = "OTS_inactiveSpeaker";
     ShotType[ShotType["closeup_inactiveSpeaker"] = 4] = "closeup_inactiveSpeaker";
-})(ShotType || (ShotType = {}));
+    ShotType[ShotType["_reverseBGShot"] = -1000] = "_reverseBGShot"; //TODO: Placeholder while we figure this out
+})(ShotType = exports.ShotType || (exports.ShotType = {}));
 function pickShot() {
     return Math.random() * 3; //TODO: Set shot based on heuristics
 }

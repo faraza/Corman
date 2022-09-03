@@ -36,12 +36,13 @@ export class VideoTimeline{
     }
 }
 
-enum ShotType{
+export enum ShotType{
     OTS_activeSpeaker = 0, //OTS w/ active speaker facing us + inactive speaker's back to us    
     wideshot = 1,
     closeup_activeSpeaker = 2,
     OTS_inactiveSpeaker = 3,
-    closeup_inactiveSpeaker = 4      
+    closeup_inactiveSpeaker = 4,
+    _reverseBGShot = -1000 //TODO: Placeholder while we figure this out
 }
 
 /**

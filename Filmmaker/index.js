@@ -29,7 +29,6 @@ const Postproduction_1 = require("./Postproduction");
  */
 function makeMovieFromPrompt(prompt) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("MovieMaker::makeMovieFromPrompt 2: ", prompt);
         const dag = new dynamicassetgenerator_1.DynamicAssetGenerator();
         // dag.generateAssetsFromPrompt({prompt: prompt}) //TODO
         const assets = yield dag.__generateDummyAssets(100);

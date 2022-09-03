@@ -18,7 +18,6 @@ import { createMovie } from './Postproduction';
  * //TODO: Should also return movieID
  */
 export async function makeMovieFromPrompt(prompt: string): Promise<string>{
-    console.log("MovieMaker::makeMovieFromPrompt 2: ", prompt)    
     const dag = new DynamicAssetGenerator()
     // dag.generateAssetsFromPrompt({prompt: prompt}) //TODO
     

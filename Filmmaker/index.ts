@@ -41,5 +41,3 @@ export async function makeMovieFromScript(script: string, movieID: string): Prom
 
 module.exports.makeMovieFromPrompt = makeMovieFromPrompt
 module.exports.makeMovieFromScript = makeMovieFromScript
-
-// makeMovieFromPrompt("Blah blah")

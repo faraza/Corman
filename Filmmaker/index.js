@@ -53,4 +53,3 @@ function makeMovieFromScript(script, movieID) {
 exports.makeMovieFromScript = makeMovieFromScript;
 module.exports.makeMovieFromPrompt = makeMovieFromPrompt;
 module.exports.makeMovieFromScript = makeMovieFromScript;
-// makeMovieFromPrompt("Blah blah")

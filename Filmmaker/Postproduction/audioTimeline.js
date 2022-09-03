@@ -1,28 +1,27 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 exports.AudioTimeline = exports.createAudioTimeline = void 0;
 function createAudioTimeline(assets) {
-    const timeline = new AudioTimeline();
-    for (let curScene = 0; curScene < assets.scriptSupervisor.getNumberOfScenes(); curScene++) {
-        for (let curDialogueLine = 0; curDialogueLine < assets.scriptSupervisor.getNumberOfLinesOfDialogue(curScene); curDialogueLine++) {
-            const dialogueFile = assets.getRecordedDialogueFilepath(curScene, curDialogueLine);
-            const dialogueLength = 5; //TODO: Get this. Figure out if API returns this or if we have to parse it from file
-            timeline.addDialogueToEnd(dialogueFile, dialogueLength, curScene);
+    var timeline = new AudioTimeline();
+    for (var curScene = 0; curScene < assets.scriptSupervisor.getNumberOfScenes(); curScene++) {
+        for (var curDialogueLine = 0; curDialogueLine < assets.scriptSupervisor.getNumberOfLinesOfDialogue(curScene); curDialogueLine++) {
+            var recordedDialogue = assets.getRecordedDialogue(curScene, curDialogueLine);
+            timeline.addDialogueToEnd(recordedDialogue);
         }
     }
     return timeline;
 }
 exports.createAudioTimeline = createAudioTimeline;
-class AudioTimeline {
-    constructor() {
+var AudioTimeline = /** @class */ (function () {
+    function AudioTimeline() {
         this.dialogueTrack = [];
         this.curTimelineLength = 0;
     }
-    addDialogueToEnd(filePath, audioLength, sceneNumber) {
-        const dialogue = { startTime: this.curTimelineLength, endTime: this.curTimelineLength + audioLength,
-            filePath: filePath, sceneNumber: sceneNumber, speakingActorID: 0 }; //TODO: Actually include speaking actor
-        this.dialogueTrack.push(dialogue);
-        this.curTimelineLength += audioLength;
-    }
-}
+    AudioTimeline.prototype.addDialogueToEnd = function (dialogue) {
+        var timelineAudio = { dialogue: dialogue, startTime: this.curTimelineLength };
+        this.dialogueTrack.push(timelineAudio);
+        this.curTimelineLength += dialogue.duration;
+    };
+    return AudioTimeline;
+}());
 exports.AudioTimeline = AudioTimeline;

@@ -1,13 +1,4 @@
 "use strict";
-/**
- * This is the abstraction layer for users to make requests to the MovieMaking pipepline
- *
- * This calls two classes:
- *  1) The generation pipeline, which generates assets like Background Images, Script, and Voices
- *  2) The directing pipeline, which chooses the shots, animates the movie, adds sounds (like score, SFX, and voices), and creates the final video
- *
- * Keep things clean and simple here. Most of the logic should take place within the relevant classes in those folders.
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,47 +36,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.makeMovieFromScript = exports.makeMovieFromPrompt = void 0;
-// const DynamicAssetGenerator = require('./DynamicAssetGenerator')
-var dynamicassetgenerator_1 = require("./Crew/dynamicassetgenerator");
-var Postproduction_1 = require("./Postproduction");
-/**
- * Calls entire pipeline
- * @returns path to movie video file
- * //TODO: Should also return movieID
- */
-function makeMovieFromPrompt(prompt) {
+exports.generateTTS = void 0;
+function generateTTS(dialogue, fileOutputLocation) {
     return __awaiter(this, void 0, void 0, function () {
-        var dag, assets;
+        var audioDuration;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    console.log("MovieMaker::makeMovieFromPrompt 2: ", prompt);
-                    dag = new dynamicassetgenerator_1.DynamicAssetGenerator();
-                    return [4 /*yield*/, dag.__generateDummyAssets(1000)];
+                case 0: return [4 /*yield*/, _getDummyTTSFromServer()];
                 case 1:
-                    assets = _a.sent();
-                    return [4 /*yield*/, (0, Postproduction_1.createMovie)(assets)];
-                case 2: return [2 /*return*/, _a.sent()];
+                    _a.sent();
+                    audioDuration = 2000;
+                    return [2 /*return*/, { rawDialogue: dialogue, filepath: fileOutputLocation, duration: audioDuration }];
             }
         });
     });
 }
-exports.makeMovieFromPrompt = makeMovieFromPrompt;
-/**
- * (Should) only call parts of pipeline that need to be regenerated based on what has changed in the script.
- * That's why it takes movieID as param - the generator pipeline will check its existing assets w/ that movieID and reuse the ones that still apply.
- *
- * @returns path to movie video file
- * //TODO: Should also return movieID
- */
-function makeMovieFromScript(script, movieID) {
-    return __awaiter(this, void 0, void 0, function () {
-        var pathToMovieFile;
-        return __generator(this, function (_a) {
-            pathToMovieFile = "";
-            return [2 /*return*/, pathToMovieFile];
-        });
+exports.generateTTS = generateTTS;
+//TODO: Batch generate TTS
+function _getDummyTTSFromServer() {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            resolve();
+        }, 3000);
     });
 }
-exports.makeMovieFromScript = makeMovieFromScript;
+function getTTSParamsFromActorID(actorID) {
+    //TODO
+}

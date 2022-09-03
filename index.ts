@@ -1,3 +1,4 @@
+// @ts-ignore //TODO: This is bad. Just for testing
 import {makeMovieFromPrompt} from './Filmmaker'
 
 

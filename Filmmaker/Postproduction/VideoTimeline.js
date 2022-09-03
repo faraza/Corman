@@ -1,27 +1,28 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 exports.VideoTimeline = exports.createVideoTimeline = void 0;
 function createVideoTimeline(assets, audioTimeline) {
-    const videoTimeline = new VideoTimeline();
-    for (let lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++) {
-        const curDialog = audioTimeline.dialogueTrack[lineNumber];
-        const cameraShot = { shotType: pickShot(), backgroundImagePath: curDialog.filePath,
+    var videoTimeline = new VideoTimeline();
+    for (var lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++) {
+        var curDialog = audioTimeline.dialogueTrack[lineNumber];
+        var cameraShot = { shotType: pickShot(), backgroundImagePath: curDialog.filePath,
             startTime: curDialog.startTime, endTime: curDialog.endTime, speakingActorID: curDialog.speakingActorID };
         videoTimeline.addShotToEndOfTimeline(cameraShot);
     }
     return videoTimeline;
 }
 exports.createVideoTimeline = createVideoTimeline;
-class VideoTimeline {
-    constructor() {
+var VideoTimeline = /** @class */ (function () {
+    function VideoTimeline() {
         this.cameraTrack = [];
         this.curTimelineLength = 0;
     }
-    addShotToEndOfTimeline(shot) {
+    VideoTimeline.prototype.addShotToEndOfTimeline = function (shot) {
         this.curTimelineLength += (shot.endTime - shot.startTime);
         this.cameraTrack.push(shot);
-    }
-}
+    };
+    return VideoTimeline;
+}());
 exports.VideoTimeline = VideoTimeline;
 var ShotType;
 (function (ShotType) {

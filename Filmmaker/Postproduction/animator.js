@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports._hardcodedOutputFileDirectory = exports._hardcodedBackgroundImageFilepath = exports._hardcodedCharacterFilePath = exports.animateShot = void 0;
 const sharp_1 = __importDefault(require("sharp"));
+const fs_1 = __importDefault(require("fs"));
 const ANIMATION_FPS = 10;
 /**
  *
@@ -43,11 +44,13 @@ function animateShot({ backgroundImageFilepath, characterImageDirectory, timeInM
 exports.animateShot = animateShot;
 function addCharacterToFrame({ mouthPosition, characterImageDirectory, fileoutputDirectory, frameNumber, backgroundImageFilepath }) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!fs_1.default.existsSync(fileoutputDirectory))
+            fs_1.default.mkdirSync(fileoutputDirectory);
         yield (0, sharp_1.default)(backgroundImageFilepath)
             .composite([
             { input: characterImageDirectory + mouthPosition + ".png", top: 100, left: 200 }
         ])
-            .toFile(fileoutputDirectory + "/" + frameNumber + ".png");
+            .toFile(fileoutputDirectory + frameNumber + ".png");
     });
 }
 exports._hardcodedCharacterFilePath = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/";
@@ -58,4 +61,3 @@ function _testAnimation() {
     animateShot({ backgroundImageFilepath: exports._hardcodedBackgroundImageFilepath, characterImageDirectory: exports._hardcodedCharacterFilePath, timeInMS: timeInMS,
         fileoutputDirectory: exports._hardcodedOutputFileDirectory });
 }
-_testAnimation();

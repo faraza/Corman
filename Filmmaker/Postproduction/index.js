@@ -36,10 +36,10 @@ function animateVideoTimeline(videoTimeline, assets) {
     return __awaiter(this, void 0, void 0, function* () {
         videoTimeline.cameraTrack.forEach((cameraShot) => {
             const fileDirectory = assets.getAnimationOutputFolder(cameraShot.sceneNumber, cameraShot.shotNumber);
-            const _imageFilePath = ""; //TODO
-            const _characterDirectory = ""; //TODO
+            const _backgroundImageFilePath = animator_1._hardcodedBackgroundImageFilepath; //TODO
+            const _characterDirectory = animator_1._hardcodedCharacterFilePath;
             const shotLength = cameraShot.endTime - cameraShot.startTime;
-            (0, animator_1.animateShot)({ backgroundImageFilepath: _imageFilePath, characterImageDirectory: _characterDirectory, timeInMS: shotLength, fileoutputDirectory: fileDirectory });
+            (0, animator_1.animateShot)({ backgroundImageFilepath: _backgroundImageFilePath, characterImageDirectory: _characterDirectory, timeInMS: shotLength, fileoutputDirectory: fileDirectory });
         });
         //TODO: Filepaths?
         //TODO: We're going to need to refactor and unify a bunch of types for this to be clean. Once we do that, actually doing the animation should be easy

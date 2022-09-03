@@ -161,7 +161,7 @@ class DynamicAssetManager {
         this.script = script;
     }
     getAnimationOutputFolder(sceneNumber, shotNumber) {
-        return this.getRootFilePath() + sceneNumber + "_" + shotNumber;
+        return this.getRootFilePath() + sceneNumber + "_" + shotNumber + "/";
     }
     getScriptFilepath() {
         return this.getRootFilePath() + "script/script";

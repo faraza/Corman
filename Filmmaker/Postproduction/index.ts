@@ -1,7 +1,7 @@
 import { DynamicAssetManager } from "../Crew/dynamicassetgenerator";
 import { createAudioTimeline, AudioTimeline} from "./audiotimeline";
 import {createVideoTimeline, VideoTimeline} from "./videotimeline"
-import {animateShot} from './animator'
+import {animateShot, _hardcodedBackgroundImageFilepath, _hardcodedCharacterFilePath, _hardcodedOutputFileDirectory} from './animator'
 
 /**
  * Creates the full movie from all assets, making choices about shot selection
@@ -22,10 +22,10 @@ async function animateAndMix(audioTimeline: AudioTimeline, videoTimeline: VideoT
 async function animateVideoTimeline(videoTimeline: VideoTimeline, assets: DynamicAssetManager){
     videoTimeline.cameraTrack.forEach((cameraShot)=>{
         const fileDirectory = assets.getAnimationOutputFolder(cameraShot.sceneNumber, cameraShot.shotNumber)
-        const _imageFilePath = "" //TODO
-        const _characterDirectory = "" //TODO
+        const _backgroundImageFilePath = _hardcodedBackgroundImageFilepath //TODO
+        const _characterDirectory = _hardcodedCharacterFilePath
         const shotLength = cameraShot.endTime - cameraShot.startTime
-        animateShot({backgroundImageFilepath: _imageFilePath, characterImageDirectory: _characterDirectory, timeInMS: shotLength, fileoutputDirectory: fileDirectory})
+        animateShot({backgroundImageFilepath: _backgroundImageFilePath, characterImageDirectory: _characterDirectory, timeInMS: shotLength, fileoutputDirectory: fileDirectory})
     })
     //TODO: Filepaths?
     //TODO: We're going to need to refactor and unify a bunch of types for this to be clean. Once we do that, actually doing the animation should be easy

@@ -1,4 +1,5 @@
 import sharp from 'sharp'
+import fs from 'fs'
 
 const ANIMATION_FPS = 10
 
@@ -24,11 +25,14 @@ export async function animateShot({ backgroundImageFilepath, characterImageDirec
 }
 
 async function addCharacterToFrame({ mouthPosition, characterImageDirectory, fileoutputDirectory, frameNumber, backgroundImageFilepath }: { mouthPosition: number; characterImageDirectory: string; fileoutputDirectory: string; frameNumber: number; backgroundImageFilepath: string; }){
+    if(!fs.existsSync(fileoutputDirectory))
+        fs.mkdirSync(fileoutputDirectory)
+    
     await sharp(backgroundImageFilepath)
     .composite([
         {input: characterImageDirectory + mouthPosition + ".png", top: 100, left: 200}
     ])
-    .toFile(fileoutputDirectory + "/" + frameNumber + ".png")
+    .toFile(fileoutputDirectory + frameNumber + ".png")
 }
 
 
@@ -41,5 +45,3 @@ function _testAnimation(){
     animateShot({backgroundImageFilepath: _hardcodedBackgroundImageFilepath, characterImageDirectory: _hardcodedCharacterFilePath, timeInMS: timeInMS,
     fileoutputDirectory: _hardcodedOutputFileDirectory})
 }
-
-_testAnimation()

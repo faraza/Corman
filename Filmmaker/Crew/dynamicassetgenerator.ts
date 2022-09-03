@@ -165,8 +165,8 @@ export class DynamicAssetManager{
         this.script = script
     }
 
-    public getAnimationOutputFolder(sceneNumber: number, shotNumber: number){
-        return this.getRootFilePath() + sceneNumber + "_" + shotNumber
+    public getAnimationOutputFolder(sceneNumber: number, shotNumber: number){ //TODO: Need to come up with a better name for intermediate animations
+        return this.getRootFilePath() + sceneNumber + "_" + shotNumber + "/"
     }
 
     public getScriptFilepath(): string{

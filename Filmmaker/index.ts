@@ -39,3 +39,8 @@ export async function makeMovieFromScript(script: string, movieID: string): Prom
     const pathToMovieFile = ""
     return pathToMovieFile
 }
+
+module.exports.makeMovieFromPrompt = makeMovieFromPrompt
+module.exports.makeMovieFromScript = makeMovieFromScript
+
+// makeMovieFromPrompt("Blah blah")

@@ -65,7 +65,7 @@ function makeMovieFromPrompt(prompt) {
                     return [4 /*yield*/, dag.__generateDummyAssets(1000)];
                 case 1:
                     assets = _a.sent();
-                    return [4 /*yield*/, (0, Postproduction_1.createMovie)(assets)];
+                    return [4 /*yield*/, Postproduction_1.createMovie(assets)];
                 case 2: return [2 /*return*/, _a.sent()];
             }
         });

@@ -54,7 +54,7 @@ var DynamicAssetGenerator = /** @class */ (function () {
      * @param prompt short prompt user enters
      */
     function DynamicAssetGenerator() {
-        this.movieID = (0, uuid_1.v4)() + Date.now();
+        this.movieID = uuid_1.v4() + Date.now();
         this.assetManager = new DynamicAssetManager(this.movieID);
     }
     DynamicAssetGenerator.prototype.generateAssetsFromPrompt = function (_a) {
@@ -108,7 +108,7 @@ var DynamicAssetGenerator = /** @class */ (function () {
                         _b.trys.push([0, 2, , 3]);
                         this.assetManager.prompt = prompt;
                         console.log("DAG::generateScript 1");
-                        return [4 /*yield*/, (0, screenwriter_1.generateScript)(prompt, this.assetManager.getScriptFilepath())];
+                        return [4 /*yield*/, screenwriter_1.generateScript(prompt, this.assetManager.getScriptFilepath())];
                     case 1:
                         script = _b.sent();
                         console.log("DAG::generateScript 2");
@@ -134,7 +134,7 @@ var DynamicAssetGenerator = /** @class */ (function () {
                         locationGenPromises = [];
                         for (sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
                             locationName = this.assetManager.scriptSupervisor.getSceneLocation(sceneNumber);
-                            locationGenPromises.push((0, setdesigner_1.generateImage)(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)));
+                            locationGenPromises.push(setdesigner_1.generateImage(locationName, this.assetManager.getLocationImageFilepath(sceneNumber)));
                         }
                         return [4 /*yield*/, Promise.all(locationGenPromises)];
                     case 1:
@@ -156,7 +156,7 @@ var DynamicAssetGenerator = /** @class */ (function () {
                         for (sceneNumber = 0; sceneNumber < this.assetManager.scriptSupervisor.getNumberOfScenes(); sceneNumber++) {
                             for (lineNumber = 0; lineNumber < this.assetManager.scriptSupervisor.getNumberOfLinesOfDialogue(sceneNumber); lineNumber++) {
                                 dialogue = this.assetManager.scriptSupervisor.getDialogue(sceneNumber, lineNumber);
-                                voiceGenPromises.push((0, voiceoverartist_1.generateTTS)(dialogue, this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)));
+                                voiceGenPromises.push(voiceoverartist_1.generateTTS(dialogue, this.assetManager.getRecordedDialogueFilepath(sceneNumber, lineNumber)));
                             }
                         }
                         return [4 /*yield*/, Promise.all(voiceGenPromises)];
@@ -224,7 +224,7 @@ var DynamicAssetManager = /** @class */ (function () {
                 return recordedDialogue;
         });
         console.log("ERROR -- DynamicAssetManager::getRecordedDialogue - not found. Scene Number: ", sceneNumber, " lineNumber: ", lineNumber, " Returning random");
-        return (0, dialogue_1.getDummyRecordedDialogue)();
+        return dialogue_1.getDummyRecordedDialogue();
     };
     DynamicAssetManager.prototype.getScript = function () {
         return this.script;

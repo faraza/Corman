@@ -25,7 +25,7 @@ var ScriptSupervisor = /** @class */ (function () {
                 return dialogue;
         });
         console.log("ERROR - ScriptSupervisor::getDialogue. Not found for scene: ", sceneNumber, " line: ", lineNumber);
-        return (0, dialogue_1.getDummyRawDialogue)(); //TODO: Throw error
+        return dialogue_1.getDummyRawDialogue(); //TODO: Throw error
     };
     ScriptSupervisor.prototype.getSceneLocation = function (sceneNumber) {
         if (sceneNumber >= this.sceneNames.length) {

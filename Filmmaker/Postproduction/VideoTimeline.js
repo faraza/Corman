@@ -7,7 +7,7 @@ function createVideoTimeline(assets, audioTimeline) {
     for (var lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++) {
         var curDialog = audioTimeline.dialogueTrack[lineNumber];
         var dialogueAudio = curDialog.dialogue;
-        if ((0, dialogue_1.isRecordedDialogue)(dialogueAudio)) {
+        if (dialogue_1.isRecordedDialogue(dialogueAudio)) {
             var backgroundImagePath = assets.getLocationImageFilepath(dialogueAudio.rawDialogue.sceneNumber);
             var cameraShot = { shotType: pickShot(), backgroundImagePath: backgroundImagePath,
                 startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration, speakingActorID: dialogueAudio.rawDialogue.actorID };

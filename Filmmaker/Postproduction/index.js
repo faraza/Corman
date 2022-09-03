@@ -49,8 +49,8 @@ function createMovie(assets) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    audioTimeline = (0, audiotimeline_1.createAudioTimeline)(assets);
-                    videoTimeline = (0, videotimeline_1.createVideoTimeline)(assets, audioTimeline);
+                    audioTimeline = audiotimeline_1.createAudioTimeline(assets);
+                    videoTimeline = videotimeline_1.createVideoTimeline(assets, audioTimeline);
                     return [4 /*yield*/, animateAndMix(audioTimeline, videoTimeline, assets)];
                 case 1:
                     _a.sent();

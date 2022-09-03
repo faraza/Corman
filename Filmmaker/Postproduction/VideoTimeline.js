@@ -1,15 +1,15 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.VideoTimeline = exports.createVideoTimeline = void 0;
-var dialogue_1 = require("../CommonClasses/dialogue");
+const dialogue_1 = require("../CommonClasses/dialogue");
 function createVideoTimeline(assets, audioTimeline) {
-    var videoTimeline = new VideoTimeline();
-    for (var lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++) {
-        var curDialog = audioTimeline.dialogueTrack[lineNumber];
-        var dialogueAudio = curDialog.dialogue;
-        if (dialogue_1.isRecordedDialogue(dialogueAudio)) {
-            var backgroundImagePath = assets.getLocationImageFilepath(dialogueAudio.rawDialogue.sceneNumber);
-            var cameraShot = { shotType: pickShot(), backgroundImagePath: backgroundImagePath,
+    const videoTimeline = new VideoTimeline();
+    for (let lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++) {
+        const curDialog = audioTimeline.dialogueTrack[lineNumber];
+        const dialogueAudio = curDialog.dialogue;
+        if ((0, dialogue_1.isRecordedDialogue)(dialogueAudio)) {
+            const backgroundImagePath = assets.getLocationImageFilepath(dialogueAudio.rawDialogue.sceneNumber);
+            const cameraShot = { shotType: pickShot(), backgroundImagePath: backgroundImagePath,
                 startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration, speakingActorID: dialogueAudio.rawDialogue.actorID };
             videoTimeline.addShotToEndOfTimeline(cameraShot);
         }
@@ -18,17 +18,16 @@ function createVideoTimeline(assets, audioTimeline) {
     return videoTimeline;
 }
 exports.createVideoTimeline = createVideoTimeline;
-var VideoTimeline = /** @class */ (function () {
-    function VideoTimeline() {
+class VideoTimeline {
+    constructor() {
         this.cameraTrack = [];
         this.curTimelineLength = 0;
     }
-    VideoTimeline.prototype.addShotToEndOfTimeline = function (shot) {
+    addShotToEndOfTimeline(shot) {
         this.curTimelineLength += (shot.endTime - shot.startTime);
         this.cameraTrack.push(shot);
-    };
-    return VideoTimeline;
-}());
+    }
+}
 exports.VideoTimeline = VideoTimeline;
 var ShotType;
 (function (ShotType) {

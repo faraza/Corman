@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.getActorIDFromName = exports.ActorID = void 0;
 /**
  * This correlates to both Voice and Actor Image

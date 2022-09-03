@@ -22,7 +22,7 @@ export async function makeMovieFromPrompt(prompt: string): Promise<string>{
     const dag = new DynamicAssetGenerator()
     // dag.generateAssetsFromPrompt({prompt: prompt}) //TODO
     
-    const assets: DynamicAssetManager = await dag.__generateDummyAssets(1000);
+    const assets: DynamicAssetManager = await dag.__generateDummyAssets(100);
     return await createMovie(assets)
 } 
 

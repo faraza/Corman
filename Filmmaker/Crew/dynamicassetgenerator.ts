@@ -146,10 +146,11 @@ export class DynamicAssetManager{
     }
 
     public getRecordedDialogue(sceneNumber: number, lineNumber: number): RecordedDialogue{
-        this.allRecordedDialogue.forEach((recordedDialogue)=>{
-            if(recordedDialogue.rawDialogue.lineNumber === lineNumber && recordedDialogue.rawDialogue.sceneNumber === sceneNumber)
-                return recordedDialogue
+        const foundDialogue = this.allRecordedDialogue.find((recordedDialogue)=>{
+            return (recordedDialogue.rawDialogue.lineNumber === lineNumber && recordedDialogue.rawDialogue.sceneNumber === sceneNumber)
         })
+        if(foundDialogue) return foundDialogue
+
         console.log("ERROR -- DynamicAssetManager::getRecordedDialogue - not found. Scene Number: ", sceneNumber, " lineNumber: ", lineNumber, " Returning random")
         return getDummyRecordedDialogue()        
     }

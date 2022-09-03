@@ -18,13 +18,14 @@ export class ScriptSupervisor{
      * @returns 
      */
     public getDialogue(sceneNumber: number, lineNumber: number): RawDialogue{        
-        this.allDialogue.forEach((dialogue)=>{
-            if(dialogue.sceneNumber === sceneNumber && dialogue.lineNumber === lineNumber)
-                return dialogue
+        const foundDialogue =  this.allDialogue.find((dialogue)=>{
+            return (dialogue.sceneNumber === sceneNumber && dialogue.lineNumber === lineNumber)
         })
+
+        if(foundDialogue) return foundDialogue
         
         console.log("ERROR - ScriptSupervisor::getDialogue. Not found for scene: ", sceneNumber, " line: ", lineNumber)
-        return getDummyRawDialogue() //TODO: Throw error
+        return getDummyRawDialogue() //TODO: Throw error 
     }
 
     public getSceneLocation(sceneNumber: number): string{

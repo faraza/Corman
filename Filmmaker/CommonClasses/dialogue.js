@@ -1,7 +1,7 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDummyRecordedDialogue = exports.getDummyRawDialogue = exports.isRecordedDialogue = void 0;
-var actor_1 = require("./actor");
+const actor_1 = require("./actor");
 function isRecordedDialogue(dialogue) {
     if (dialogue.rawDialogue)
         return true;

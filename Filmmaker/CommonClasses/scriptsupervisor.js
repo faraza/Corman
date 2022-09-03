@@ -1,15 +1,15 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScriptSupervisor = void 0;
-var actor_1 = require("./actor");
-var dialogue_1 = require("./dialogue");
+const actor_1 = require("./actor");
+const dialogue_1 = require("./dialogue");
 /**
  * This class takes a written script and parses out all the relevant information and gives easy access to it for other classes
  * E.g. what are the locations, dialogueLines, etc
  */
 //TODO: Make constructor require script 
-var ScriptSupervisor = /** @class */ (function () {
-    function ScriptSupervisor() {
+class ScriptSupervisor {
+    constructor() {
         this.allDialogue = [];
         this.sceneNames = [];
     }
@@ -19,45 +19,45 @@ var ScriptSupervisor = /** @class */ (function () {
      * @param lineNumber - 0 indexed
      * @returns
      */
-    ScriptSupervisor.prototype.getDialogue = function (sceneNumber, lineNumber) {
-        this.allDialogue.forEach(function (dialogue) {
-            if (dialogue.sceneNumber === sceneNumber && dialogue.lineNumber === lineNumber)
-                return dialogue;
+    getDialogue(sceneNumber, lineNumber) {
+        const foundDialogue = this.allDialogue.find((dialogue) => {
+            return (dialogue.sceneNumber === sceneNumber && dialogue.lineNumber === lineNumber);
         });
+        if (foundDialogue)
+            return foundDialogue;
         console.log("ERROR - ScriptSupervisor::getDialogue. Not found for scene: ", sceneNumber, " line: ", lineNumber);
-        return dialogue_1.getDummyRawDialogue(); //TODO: Throw error
-    };
-    ScriptSupervisor.prototype.getSceneLocation = function (sceneNumber) {
+        return (0, dialogue_1.getDummyRawDialogue)(); //TODO: Throw error 
+    }
+    getSceneLocation(sceneNumber) {
         if (sceneNumber >= this.sceneNames.length) {
             console.log("ERROR - ScriptSupervisor::getSceneLocation. Requested a scene number that is too high: ", sceneNumber, " Total scenes: ", this.sceneNames.length); //TODO: Throw error
             return "ERROR SCENE";
         }
         return this.sceneNames[sceneNumber];
-    };
-    ScriptSupervisor.prototype.getNumberOfScenes = function () {
+    }
+    getNumberOfScenes() {
         return this.sceneNames.length;
-    };
-    ScriptSupervisor.prototype.getNumberOfLinesOfDialogue = function (sceneNumber) {
-        var numberOfLines = 0;
-        this.allDialogue.forEach(function (dialogue) {
+    }
+    getNumberOfLinesOfDialogue(sceneNumber) {
+        let numberOfLines = 0;
+        this.allDialogue.forEach((dialogue) => {
             if (dialogue.sceneNumber === sceneNumber)
                 numberOfLines++;
         });
         return numberOfLines;
-    };
+    }
     /**
      * Parses the script and fills in all of the variables. NOTE - this class should not be called until you've done this!
      * Also saves the ScriptSupervisor object to disk for debugging
      * @param script
      */
-    ScriptSupervisor.prototype.loadScript = function (script, filepath) {
+    loadScript(script, filepath) {
         //TODO
-    };
-    ScriptSupervisor.prototype._generateDummy = function () {
+    }
+    _generateDummy() {
         this.sceneNames = ["dummyscene"];
-        var dummyDialogue = { actorID: actor_1.ActorID.Jennifer, sceneNumber: 0, lineNumber: 0, words: "Dummy words" };
+        const dummyDialogue = { actorID: actor_1.ActorID.Jennifer, sceneNumber: 0, lineNumber: 0, words: "Dummy words" };
         this.allDialogue = [dummyDialogue];
-    };
-    return ScriptSupervisor;
-}());
+    }
+}
 exports.ScriptSupervisor = ScriptSupervisor;

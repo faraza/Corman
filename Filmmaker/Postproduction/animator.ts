@@ -45,8 +45,10 @@ async function animateShot(camerashot: CameraShot){
         else if(Math.random() > .5) curMouthPosition = 2 
         else curMouthPosition = 0
                 
-        //Create file folder if it doesn't exist
-        addCharacterToFrame(curMouthPosition, fileoutputlocation)
+        //TODO: Create file folder if it doesn't exist
+        
+        const frameImageLocation = ""
+        // addCharacterToFrame(curMouthPosition, fileoutputlocation)
     }
 }
 
@@ -56,18 +58,18 @@ async function animateShot(camerashot: CameraShot){
  * @param isPrimary irrelevant for wideshot, but for OTS this is the character who is facing us. Usually the speaking character.
  */
 function getCharacterDirectory(cameraShot: CameraShot, isPrimary: boolean){
-    return _hardcodedCharacterFilePath //TODO
+    return "" //TODO
 }
 
-async function generateCharacterFrame(characterDirectory: string, mouthPosition: number, outputFilePath: string){
-    /*if(!fs.existsSync(fileoutputDirectory))
-        fs.mkdirSync(fileoutputDirectory)
-    
-    await sharp(backgroundImageFilepath)
+//Assumes that the static image (cut + blurred background, static character) has already been generated
+    //TODO: Character directory should be the directory for the character in that shot. It should factor in the character's size and whether or not the character is in motion
+    //TODO: Remember to make all directories before calling these
+async function addCharToFrame(frameImage: string, characterImage: string, position: CharacterPosition, outputFile: string ){     
+    await sharp(frameImage)
     .composite([
-        {input: characterDirectory + mouthPosition + ".png", top: 100, left: 200} //TODO: Factor in shot type to 'top' and 'left'
+        {input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft} 
     ])
-    .toFile(fileoutputDirectory + frameNumber + ".png") */
+    .toFile(outputFile)
 }
 
 class AnimationFileManager{
@@ -96,12 +98,31 @@ class AnimationFileManager{
 }
 
 
-const _hardcodedCharacterFilePath = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/"
 const _hardcodedBackgroundImageFilepath = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/locations/1.png"
 const _hardcodedOutputFileDirectory = "/Users/farazabidi/Documents/Corman/output_animation/"
 
-function _testAnimation(){
-    const timeInMS = 800
-    animateShot({backgroundImageFilepath: _hardcodedBackgroundImageFilepath, characterImageDirectory: _hardcodedCharacterFilePath, timeInMS: timeInMS,
-    fileoutputDirectory: _hardcodedOutputFileDirectory})
+async function _testAddCharToFrame(){
+    //Intermediate    
+        //TODO
+    const frame_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/processedshotbackground.png"
+    const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png"
+    const position_int: CharacterPosition = {distanceFromTop: 100, distanceFromLeft: 10}
+    const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png"
+    await addCharToFrame(frame_int, charImage_int, position_int, output_int)
+
+
+    //Actual frame
+    const frameImage_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png"
+    const characterImage_actual = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/0.png" //TODO: Also factor in size
+    const position_actual: CharacterPosition = {distanceFromTop: 160, distanceFromLeft: 300}
+    const outputFile_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/frame1.png"
+
+    addCharToFrame(frameImage_actual, characterImage_actual, position_actual, outputFile_actual)
 }
+
+type CharacterPosition = {
+    distanceFromLeft: number,
+    distanceFromTop: number 
+}
+
+_testAddCharToFrame()

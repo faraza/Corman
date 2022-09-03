@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.animateVideoTimeline = void 0;
+const sharp_1 = __importDefault(require("sharp"));
 const app_root_path_1 = __importDefault(require("app-root-path"));
 const ANIMATION_FPS = 10;
 function animateVideoTimeline(videoTimeline, assets) {
@@ -52,8 +53,9 @@ function animateShot(camerashot) {
                 curMouthPosition = 2;
             else
                 curMouthPosition = 0;
-            //Create file folder if it doesn't exist
-            addCharacterToFrame(curMouthPosition, fileoutputlocation);
+            //TODO: Create file folder if it doesn't exist
+            const frameImageLocation = "";
+            // addCharacterToFrame(curMouthPosition, fileoutputlocation)
         }
     });
 }
@@ -63,18 +65,18 @@ function animateShot(camerashot) {
  * @param isPrimary irrelevant for wideshot, but for OTS this is the character who is facing us. Usually the speaking character.
  */
 function getCharacterDirectory(cameraShot, isPrimary) {
-    return _hardcodedCharacterFilePath; //TODO
+    return ""; //TODO
 }
-function generateCharacterFrame(characterDirectory, mouthPosition, outputFilePath) {
+//Assumes that the static image (cut + blurred background, static character) has already been generated
+//TODO: Character directory should be the directory for the character in that shot. It should factor in the character's size and whether or not the character is in motion
+//TODO: Remember to make all directories before calling these
+function addCharToFrame(frameImage, characterImage, position, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
-        /*if(!fs.existsSync(fileoutputDirectory))
-            fs.mkdirSync(fileoutputDirectory)
-        
-        await sharp(backgroundImageFilepath)
-        .composite([
-            {input: characterDirectory + mouthPosition + ".png", top: 100, left: 200} //TODO: Factor in shot type to 'top' and 'left'
+        yield (0, sharp_1.default)(frameImage)
+            .composite([
+            { input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft }
         ])
-        .toFile(fileoutputDirectory + frameNumber + ".png") */
+            .toFile(outputFile);
     });
 }
 class AnimationFileManager {
@@ -96,11 +98,23 @@ class AnimationFileManager {
         return app_root_path_1.default + "/Assets/dynamic_assets/" + this.movieID + "/intermediateAnimations/";
     }
 }
-const _hardcodedCharacterFilePath = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/";
 const _hardcodedBackgroundImageFilepath = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/locations/1.png";
 const _hardcodedOutputFileDirectory = "/Users/farazabidi/Documents/Corman/output_animation/";
-function _testAnimation() {
-    const timeInMS = 800;
-    animateShot({ backgroundImageFilepath: _hardcodedBackgroundImageFilepath, characterImageDirectory: _hardcodedCharacterFilePath, timeInMS: timeInMS,
-        fileoutputDirectory: _hardcodedOutputFileDirectory });
+function _testAddCharToFrame() {
+    return __awaiter(this, void 0, void 0, function* () {
+        //Intermediate    
+        //TODO
+        const frame_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/processedshotbackground.png";
+        const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png";
+        const position_int = { distanceFromTop: 100, distanceFromLeft: 10 };
+        const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
+        yield addCharToFrame(frame_int, charImage_int, position_int, output_int);
+        //Actual frame
+        const frameImage_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
+        const characterImage_actual = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/0.png"; //TODO: Also factor in size
+        const position_actual = { distanceFromTop: 160, distanceFromLeft: 300 };
+        const outputFile_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/frame1.png";
+        addCharToFrame(frameImage_actual, characterImage_actual, position_actual, outputFile_actual);
+    });
 }
+_testAddCharToFrame();

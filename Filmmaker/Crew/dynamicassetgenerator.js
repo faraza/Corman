@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DynamicAssetManager = exports.DynamicAssetGenerator = void 0;
 const screenwriter_1 = require("./screenwriter");
@@ -16,7 +19,7 @@ const setdesigner_1 = require("./setdesigner");
 const voiceoverartist_1 = require("./voiceoverartist");
 const uuid_1 = require("uuid");
 const dialogue_1 = require("../CommonClasses/dialogue");
-const appRoot = require('app-root-path');
+const app_root_path_1 = __importDefault(require("app-root-path"));
 /**
  * TODO: No need for this to be a class. Just break it down into functions
  */
@@ -108,8 +111,8 @@ class DynamicAssetManager {
      * @param movieID Unique identifier that describes the movie. Uses this for folder naming
      */
     constructor(movieID) {
-        this.script = "";
         this.movieID = "";
+        this.script = "";
         this.allRecordedDialogue = [];
         this.movieID = movieID;
         this.scriptSupervisor = new scriptsupervisor_1.ScriptSupervisor();
@@ -160,9 +163,6 @@ class DynamicAssetManager {
         this.scriptSupervisor.loadScript(script, this.getScriptSupervisorFilepath());
         this.script = script;
     }
-    getAnimationOutputFolder(sceneNumber, shotNumber) {
-        return this.getRootFilePath() + sceneNumber + "_" + shotNumber + "/";
-    }
     getScriptFilepath() {
         return this.getRootFilePath() + "script/script";
     }
@@ -170,7 +170,14 @@ class DynamicAssetManager {
         return this.getRootFilePath + "script/scriptSupervisor";
     }
     getRootFilePath() {
-        return appRoot + "/Assets/dynamic_assets/" + this.movieID + "/";
+        return app_root_path_1.default + "/Assets/dynamic_assets/" + this.movieID + "/";
+    }
+    /**
+     * TODO: Refactor this to a more fitting location?
+     * @returns
+     */
+    getGeneratedMovieDirectory() {
+        return app_root_path_1.default + "/output_animation/" + this.movieID + "/";
     }
 }
 exports.DynamicAssetManager = DynamicAssetManager;

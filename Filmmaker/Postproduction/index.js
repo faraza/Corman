@@ -28,23 +28,8 @@ function createMovie(assets) {
 exports.createMovie = createMovie;
 function animateAndMix(audioTimeline, videoTimeline, assets) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield animateVideoTimeline(videoTimeline, assets);
+        yield (0, animator_1.animateVideoTimeline)(videoTimeline, assets);
         yield addAudioToAnimatedVideo(audioTimeline, assets);
-    });
-}
-function animateVideoTimeline(videoTimeline, assets) {
-    return __awaiter(this, void 0, void 0, function* () {
-        videoTimeline.cameraTrack.forEach((cameraShot) => {
-            const fileDirectory = assets.getAnimationOutputFolder(cameraShot.sceneNumber, cameraShot.shotNumber);
-            const _backgroundImageFilePath = animator_1._hardcodedBackgroundImageFilepath; //TODO
-            const _characterDirectory = animator_1._hardcodedCharacterFilePath;
-            const shotLength = cameraShot.endTime - cameraShot.startTime;
-            (0, animator_1.animateShot)({ backgroundImageFilepath: _backgroundImageFilePath, characterImageDirectory: _characterDirectory, timeInMS: shotLength, fileoutputDirectory: fileDirectory });
-        });
-        //TODO: Filepaths?
-        //TODO: We're going to need to refactor and unify a bunch of types for this to be clean. Once we do that, actually doing the animation should be easy
-        //Each shot in the video timeline needs to tell us ActiveSpeaker and shot location
-        //We also don't want to regen the shot background everytime, so we should have a step that just does that once
     });
 }
 function addAudioToAnimatedVideo(audioTimeline, assets) {

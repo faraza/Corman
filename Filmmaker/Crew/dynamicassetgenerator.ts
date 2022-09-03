@@ -5,7 +5,7 @@ import { generateImage } from "./setdesigner";
 import { generateTTS } from "./voiceoverartist";
 import {v4 as uuidv4} from 'uuid'
 import { getDummyRawDialogue, getDummyRecordedDialogue, RawDialogue, RecordedDialogue } from "../CommonClasses/dialogue";
-const appRoot = require('app-root-path');
+import appRoot from 'app-root-path';
 
 
 /**
@@ -96,10 +96,9 @@ export class DynamicAssetGenerator{
 export class DynamicAssetManager{  
     public scriptSupervisor: ScriptSupervisor
     public prompt?: string
+    public movieID: string = ""    
     
-    
-    private script: string = ""      
-    private movieID: string = ""    
+    private script: string = ""          
     private allRecordedDialogue: RecordedDialogue[] = []
 
     /**
@@ -163,11 +162,7 @@ export class DynamicAssetManager{
     public setScript(script: string){
         this.scriptSupervisor.loadScript(script, this.getScriptSupervisorFilepath())
         this.script = script
-    }
-
-    public getAnimationOutputFolder(sceneNumber: number, shotNumber: number){ //TODO: Need to come up with a better name for intermediate animations
-        return this.getRootFilePath() + sceneNumber + "_" + shotNumber + "/"
-    }
+    }    
 
     public getScriptFilepath(): string{
         return this.getRootFilePath() + "script/script"
@@ -179,6 +174,14 @@ export class DynamicAssetManager{
 
     private getRootFilePath(): string{
         return appRoot + "/Assets/dynamic_assets/" + this.movieID + "/"
+    }    
+
+    /**
+     * TODO: Refactor this to a more fitting location?
+     * @returns 
+     */
+    public getGeneratedMovieDirectory(): string{
+        return appRoot + "/output_animation/" + this.movieID + "/"
     }
 
 }

@@ -1,7 +1,7 @@
 import { DynamicAssetManager } from "../Crew/dynamicassetgenerator";
 import { createAudioTimeline, AudioTimeline} from "./audiotimeline";
 import {createVideoTimeline, VideoTimeline} from "./videotimeline"
-import {animateShot, _hardcodedBackgroundImageFilepath, _hardcodedCharacterFilePath, _hardcodedOutputFileDirectory} from './animator'
+import {animateVideoTimeline} from './animator'
 
 /**
  * Creates the full movie from all assets, making choices about shot selection
@@ -17,20 +17,6 @@ export async function createMovie(assets: DynamicAssetManager): Promise<string>{
 async function animateAndMix(audioTimeline: AudioTimeline, videoTimeline: VideoTimeline, assets: DynamicAssetManager){ //TODO: Rename this
     await animateVideoTimeline(videoTimeline, assets)
     await addAudioToAnimatedVideo(audioTimeline, assets)
-}
-
-async function animateVideoTimeline(videoTimeline: VideoTimeline, assets: DynamicAssetManager){
-    videoTimeline.cameraTrack.forEach((cameraShot)=>{
-        const fileDirectory = assets.getAnimationOutputFolder(cameraShot.sceneNumber, cameraShot.shotNumber)
-        const _backgroundImageFilePath = _hardcodedBackgroundImageFilepath //TODO
-        const _characterDirectory = _hardcodedCharacterFilePath
-        const shotLength = cameraShot.endTime - cameraShot.startTime
-        animateShot({backgroundImageFilepath: _backgroundImageFilePath, characterImageDirectory: _characterDirectory, timeInMS: shotLength, fileoutputDirectory: fileDirectory})
-    })
-    //TODO: Filepaths?
-    //TODO: We're going to need to refactor and unify a bunch of types for this to be clean. Once we do that, actually doing the animation should be easy
-        //Each shot in the video timeline needs to tell us ActiveSpeaker and shot location
-        //We also don't want to regen the shot background everytime, so we should have a step that just does that once
 }
 
 async function addAudioToAnimatedVideo(audioTimeline: AudioTimeline, assets: DynamicAssetManager){

@@ -4,13 +4,15 @@ exports.VideoTimeline = exports.createVideoTimeline = void 0;
 const dialogue_1 = require("../CommonClasses/dialogue");
 function createVideoTimeline(assets, audioTimeline) {
     const videoTimeline = new VideoTimeline();
+    let shotNumber = 0;
     for (let lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++) {
         const curDialog = audioTimeline.dialogueTrack[lineNumber];
         const dialogueAudio = curDialog.dialogue;
         if ((0, dialogue_1.isRecordedDialogue)(dialogueAudio)) {
             const backgroundImagePath = assets.getLocationImageFilepath(dialogueAudio.rawDialogue.sceneNumber);
             const cameraShot = { shotType: pickShot(), backgroundImagePath: backgroundImagePath,
-                startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration, speakingActorID: dialogueAudio.rawDialogue.actorID };
+                startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration,
+                speakingActorID: dialogueAudio.rawDialogue.actorID, shotNumber: shotNumber++, sceneNumber: dialogueAudio.rawDialogue.sceneNumber };
             videoTimeline.addShotToEndOfTimeline(cameraShot);
         }
         //TODO: Support empty dialogue

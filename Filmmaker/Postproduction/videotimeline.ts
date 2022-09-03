@@ -2,17 +2,22 @@ import { DynamicAssetManager } from "../Crew/dynamicassetgenerator";
 import { createAudioTimeline, AudioTimeline} from "./audiotimeline";
 import { RecordedDialogue } from "../CommonClasses/dialogue";
 import { isRecordedDialogue } from "../CommonClasses/dialogue";
+import { ActorID } from "../CommonClasses/actor";
 
 export function createVideoTimeline(assets: DynamicAssetManager, audioTimeline: AudioTimeline): VideoTimeline{
     const videoTimeline = new VideoTimeline()
 
+    let shotNumber = 0
     for(let lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++){
         const curDialog = audioTimeline.dialogueTrack[lineNumber]
         const dialogueAudio = curDialog.dialogue         
         if(isRecordedDialogue(dialogueAudio)){
             const backgroundImagePath =  assets.getLocationImageFilepath(dialogueAudio.rawDialogue.sceneNumber)
+            
             const cameraShot: CameraShot = {shotType: pickShot(), backgroundImagePath: backgroundImagePath, 
-                startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration, speakingActorID: dialogueAudio.rawDialogue.actorID}
+                startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration, 
+                speakingActorID: dialogueAudio.rawDialogue.actorID, shotNumber: shotNumber++, sceneNumber: dialogueAudio.rawDialogue.sceneNumber}
+            
             videoTimeline.addShotToEndOfTimeline(cameraShot)
         }
         //TODO: Support empty dialogue
@@ -48,7 +53,9 @@ export type CameraShot = {
     backgroundImagePath: string
     startTime: number
     endTime: number
-    speakingActorID: number //Actor who is talking; 0 if it's a still shot; //TODO: We need to have another class for actors that figures this out. We're juggling it all over            
+    speakingActorID: ActorID //Actor who is talking; 0 if it's a still shot;
+    shotNumber: number
+    sceneNumber: number
 }
 
 function pickShot(): ShotType{        

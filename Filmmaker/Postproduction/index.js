@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMovie = void 0;
 const audiotimeline_1 = require("./audiotimeline");
 const videotimeline_1 = require("./videotimeline");
+const animator_1 = require("./animator");
 /**
  * Creates the full movie from all assets, making choices about shot selection
  * Returns filepath to video
@@ -33,6 +34,13 @@ function animateAndMix(audioTimeline, videoTimeline, assets) {
 }
 function animateVideoTimeline(videoTimeline, assets) {
     return __awaiter(this, void 0, void 0, function* () {
+        videoTimeline.cameraTrack.forEach((cameraShot) => {
+            const fileDirectory = assets.getAnimationOutputFolder(cameraShot.sceneNumber, cameraShot.shotNumber);
+            const _imageFilePath = ""; //TODO
+            const _characterDirectory = ""; //TODO
+            const shotLength = cameraShot.endTime - cameraShot.startTime;
+            (0, animator_1.animateShot)({ backgroundImageFilepath: _imageFilePath, characterImageDirectory: _characterDirectory, timeInMS: shotLength, fileoutputDirectory: fileDirectory });
+        });
         //TODO: Filepaths?
         //TODO: We're going to need to refactor and unify a bunch of types for this to be clean. Once we do that, actually doing the animation should be easy
         //Each shot in the video timeline needs to tell us ActiveSpeaker and shot location

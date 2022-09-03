@@ -91,6 +91,7 @@ export class DynamicAssetGenerator{
 /**
  * This class just stores all the stuff that's generated and gives convenient functions for accessing them.
  * Not really any logic going on here
+ * TODO: Port this to common classes
  */
 export class DynamicAssetManager{  
     public scriptSupervisor: ScriptSupervisor
@@ -162,6 +163,10 @@ export class DynamicAssetManager{
     public setScript(script: string){
         this.scriptSupervisor.loadScript(script, this.getScriptSupervisorFilepath())
         this.script = script
+    }
+
+    public getAnimationOutputFolder(sceneNumber: number, shotNumber: number){
+        return this.getRootFilePath() + sceneNumber + "_" + shotNumber
     }
 
     public getScriptFilepath(): string{

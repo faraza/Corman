@@ -1,14 +1,22 @@
 import { DynamicAssetManager } from "../Crew/dynamicassetgenerator";
-import { createAudioTimeline, AudioTimeline, RecordedDialogue} from "./audiotimeline";
+import { createAudioTimeline, AudioTimeline} from "./audiotimeline";
+import { RecordedDialogue } from "../CommonClasses/dialogue";
+import { isRecordedDialogue } from "../CommonClasses/dialogue";
 
 export function createVideoTimeline(assets: DynamicAssetManager, audioTimeline: AudioTimeline): VideoTimeline{
     const videoTimeline = new VideoTimeline()
 
     for(let lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++){
         const curDialog = audioTimeline.dialogueTrack[lineNumber]
-        const cameraShot: CameraShot = {shotType: pickShot(), backgroundImagePath: curDialog.filePath, 
-            startTime: curDialog.startTime, endTime: curDialog.endTime, speakingActorID: curDialog.speakingActorID}
-        videoTimeline.addShotToEndOfTimeline(cameraShot)
+        const dialogueAudio = curDialog.dialogue         
+        if(isRecordedDialogue(dialogueAudio)){
+            const backgroundImagePath =  assets.getLocationImageFilepath(dialogueAudio.rawDialogue.sceneNumber)
+            const cameraShot: CameraShot = {shotType: pickShot(), backgroundImagePath: backgroundImagePath, 
+                startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration, speakingActorID: dialogueAudio.rawDialogue.actorID}
+            videoTimeline.addShotToEndOfTimeline(cameraShot)
+        }
+        //TODO: Support empty dialogue
+        
     }    
         
     return videoTimeline

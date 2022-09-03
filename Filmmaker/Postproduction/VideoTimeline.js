@@ -1,13 +1,19 @@
 "use strict";
 exports.__esModule = true;
 exports.VideoTimeline = exports.createVideoTimeline = void 0;
+var dialogue_1 = require("../CommonClasses/dialogue");
 function createVideoTimeline(assets, audioTimeline) {
     var videoTimeline = new VideoTimeline();
     for (var lineNumber = 0; lineNumber < audioTimeline.dialogueTrack.length; lineNumber++) {
         var curDialog = audioTimeline.dialogueTrack[lineNumber];
-        var cameraShot = { shotType: pickShot(), backgroundImagePath: curDialog.filePath,
-            startTime: curDialog.startTime, endTime: curDialog.endTime, speakingActorID: curDialog.speakingActorID };
-        videoTimeline.addShotToEndOfTimeline(cameraShot);
+        var dialogueAudio = curDialog.dialogue;
+        if ((0, dialogue_1.isRecordedDialogue)(dialogueAudio)) {
+            var backgroundImagePath = assets.getLocationImageFilepath(dialogueAudio.rawDialogue.sceneNumber);
+            var cameraShot = { shotType: pickShot(), backgroundImagePath: backgroundImagePath,
+                startTime: curDialog.startTime, endTime: curDialog.startTime + curDialog.dialogue.duration, speakingActorID: dialogueAudio.rawDialogue.actorID };
+            videoTimeline.addShotToEndOfTimeline(cameraShot);
+        }
+        //TODO: Support empty dialogue
     }
     return videoTimeline;
 }

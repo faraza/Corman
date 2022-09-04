@@ -51,8 +51,8 @@ export enum ShotType{
 export type CameraShot = {        
     shotType: ShotType
     backgroundImagePath: string
-    startTime: number
-    endTime: number
+    startTime: number //ms
+    endTime: number //ms
     speakingActorID: ActorID //Actor who is talking; 0 if it's a still shot;
     shotNumber: number
     sceneNumber: number

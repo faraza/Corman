@@ -16,6 +16,7 @@ exports.animateVideoTimeline = void 0;
 const sharp_1 = __importDefault(require("sharp"));
 const app_root_path_1 = __importDefault(require("app-root-path"));
 const videotimeline_1 = require("./videotimeline");
+const actor_1 = require("../CommonClasses/actor");
 const ANIMATION_FPS = 10;
 function animateVideoTimeline(videoTimeline, assets) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -71,6 +72,39 @@ function addCharacterToFrame(frameImage, characterImage, position, outputFile) {
             .toFile(outputFile);
     });
 }
+function addStaticCharacterToFrame(cameraShot, outputFile) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png";
+        const actorID = (cameraShot.speakingActorID == actor_1.ActorID.Jennifer) ? actor_1.ActorID.Sarah : actor_1.ActorID.Jennifer;
+        const emotion = actor_1.ActorEmotion.Neutral; //TODO: Need to include that in the cameraShot
+        const isPrimary = (0, actor_1.isPrimaryActor)(actorID);
+        const shotType = cameraShot.shotType;
+        const characterInfo = { actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType };
+        const characterImage = getCharacterImageFolder(characterInfo) + "1.png";
+        const characterPosition = getCharacterPosition(characterInfo);
+        yield addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile);
+    });
+}
+function getCameraShotFolder(cameraShot) {
+    //TODO
+    return "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/";
+}
+function getCharacterImageFolder(characterInfo) {
+    //TODO: Factor in all the other stuff
+    if (characterInfo.isPrimary) {
+        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/";
+    }
+    else {
+        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/";
+    }
+}
+function getCharacterPosition(characterInfo) {
+    //TODO: Factor in Shot type
+    if (characterInfo.isPrimary)
+        return { distanceFromLeft: 50, distanceFromTop: 100 };
+    else
+        return { distanceFromLeft: 250, distanceFromTop: 100 };
+}
 function generateShotBackground(imageFile, shotType, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
         if (shotType === videotimeline_1.ShotType.wideshot) { //TODO: Do some stuff w/ cropping so it looks different from OTS. But it's fine for now
@@ -124,8 +158,6 @@ class AnimationFileManager {
         return app_root_path_1.default + "/Assets/dynamic_assets/" + this.movieID + "/intermediateAnimations/";
     }
 }
-const _hardcodedBackgroundImageFilepath = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/locations/1.png";
-const _hardcodedOutputFileDirectory = "/Users/farazabidi/Documents/Corman/output_animation/";
 function _testAddCharToFrame() {
     return __awaiter(this, void 0, void 0, function* () {
         //Intermediate    
@@ -159,4 +191,19 @@ function _testGenerateShot() {
         generateShotBackground(backgroundImage, videotimeline_1.ShotType.wideshot, out5);
     });
 }
-_testGenerateShot();
+function _testGenerateStatic() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png";
+        const startTime = 0;
+        const endTime = 4000;
+        const shotNumber = 0;
+        const sceneNumber = 0;
+        const isPrimary = false;
+        const actorID = isPrimary ? actor_1.ActorID.Sarah : actor_1.ActorID.Jennifer;
+        const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png";
+        const shotType1 = videotimeline_1.ShotType.OTS_primaryActor;
+        const shot1 = { shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
+        yield addStaticCharacterToFrame(shot1, out1);
+    });
+}
+// _testGenerateStatic()

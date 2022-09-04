@@ -3,7 +3,7 @@ import fs from 'fs'
 import appRoot from 'app-root-path';
 import { CameraShot, VideoTimeline, ShotType } from './videotimeline';
 import { DynamicAssetManager } from '../Crew/dynamicassetgenerator';
-import { ActorID } from '../CommonClasses/actor';
+import { ActorID, ActorEmotion, isPrimaryActor} from '../CommonClasses/actor';
 
 const ANIMATION_FPS = 10
 
@@ -60,6 +60,45 @@ async function addCharacterToFrame(frameImage: string, characterImage: string, p
         {input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft} 
     ])
     .toFile(outputFile)
+}
+
+async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: string){  
+    const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png"        
+    
+    const actorID: ActorID = (cameraShot.speakingActorID == ActorID.Jennifer) ? ActorID.Sarah : ActorID.Jennifer
+    const emotion: ActorEmotion = ActorEmotion.Neutral //TODO: Need to include that in the cameraShot
+    const isPrimary = isPrimaryActor(actorID)
+    const shotType = cameraShot.shotType
+
+    const characterInfo: CharacterShotInfo = {actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType}
+    const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
+    const characterPosition = getCharacterPosition(characterInfo)        
+    
+    await addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile)    
+}
+
+function getCameraShotFolder(cameraShot: CameraShot): string{
+    //TODO
+    return "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/"    
+}
+
+function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
+    //TODO: Factor in all the other stuff
+    if(characterInfo.isPrimary){
+        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/"
+    }
+    else{
+        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/"
+    }
+    
+}
+
+function getCharacterPosition(characterInfo: CharacterShotInfo) {
+    //TODO: Factor in Shot type
+    if(characterInfo.isPrimary)
+        return {distanceFromLeft: 50, distanceFromTop: 100}
+    else
+        return {distanceFromLeft: 250, distanceFromTop: 100}
 }
 
 async function generateShotBackground(imageFile: string, shotType: ShotType, outputFile: string){     
@@ -120,10 +159,6 @@ class AnimationFileManager{
 
 }
 
-
-const _hardcodedBackgroundImageFilepath = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/locations/1.png"
-const _hardcodedOutputFileDirectory = "/Users/farazabidi/Documents/Corman/output_animation/"
-
 async function _testAddCharToFrame(){
     //Intermediate    
         //TODO
@@ -168,4 +203,26 @@ type CharacterPosition = {
     distanceFromTop: number 
 }
 
-_testGenerateShot()
+type CharacterShotInfo = {
+    actorID: ActorID,
+    emotion: ActorEmotion,
+    isPrimary: boolean,
+    shotType: ShotType
+}
+
+async function _testGenerateStatic(){
+    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
+    const startTime = 0
+    const endTime = 4000
+    const shotNumber = 0
+    const sceneNumber = 0
+    const isPrimary = false
+    const actorID = isPrimary ? ActorID.Sarah : ActorID.Jennifer
+
+    const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"
+    const shotType1 = ShotType.OTS_primaryActor
+    const shot1: CameraShot = {shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}
+    await addStaticCharacterToFrame(shot1, out1)
+}
+
+// _testGenerateStatic()

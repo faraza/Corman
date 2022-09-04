@@ -98,17 +98,19 @@ function addStaticCharacterToFrame(cameraShot, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
         const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png";
         const characterInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false });
+        console.log("addStaticCharacterToFrame. Info: ", characterInfo);
         const characterImage = getCharacterImageFolder(characterInfo) + "1.png";
         const characterPosition = getCharacterPosition(characterInfo);
         yield addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile);
     });
 }
 function getCharacterShotInfo({ cameraShot, isSpeaker }) {
-    const nonSpeakingActor = (cameraShot.speakingActorID == actor_1.ActorID.Jennifer) ? actor_1.ActorID.Sarah : actor_1.ActorID.Jennifer;
+    const nonSpeakingActor = (cameraShot.speakingActorID === actor_1.ActorID.Jennifer) ? actor_1.ActorID.Sarah : actor_1.ActorID.Jennifer;
     const actorID = isSpeaker ? cameraShot.speakingActorID : nonSpeakingActor;
     const emotion = actor_1.ActorEmotion.Neutral; //TODO: Need to include that in the cameraShot
-    const isPrimary = (0, actor_1.isPrimaryActor)(actorID);
+    const isPrimary = (actorID === (0, actor_1.getPrimaryActor)());
     const shotType = cameraShot.shotType;
+    console.log("GetCharacterShotInfo. Speaker: " + cameraShot.speakingActorID + " Nonspeaker: " + nonSpeakingActor);
     return { actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType };
 }
 //TODO
@@ -130,9 +132,9 @@ function getCharacterImageFolder(characterInfo) {
 function getCharacterPosition(characterInfo) {
     //TODO: Factor in Shot type
     if (characterInfo.isPrimary)
-        return { distanceFromLeft: 50, distanceFromTop: 100 };
-    else
         return { distanceFromLeft: 250, distanceFromTop: 100 };
+    else
+        return { distanceFromLeft: 50, distanceFromTop: 100 };
 }
 function generateShotBackground(imageFile, shotType, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -228,10 +230,11 @@ function _testGenerateStatic() {
         const shotNumber = 0;
         const sceneNumber = 0;
         const isPrimary = false;
-        const actorID = isPrimary ? actor_1.ActorID.Sarah : actor_1.ActorID.Jennifer;
+        const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
+        const speakingActor = actorID == (0, actor_1.getPrimaryActor)() ? (0, actor_1.getSecondaryActor)() : (0, actor_1.getPrimaryActor)(); //We can skip this but it's just to illustrate how we came up with it
         const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png";
         const shotType1 = videotimeline_1.ShotType.OTS_primaryActor;
-        const shot1 = { shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
+        const shot1 = { shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: speakingActor, shotNumber: shotNumber, sceneNumber: sceneNumber };
         yield addStaticCharacterToFrame(shot1, out1);
     });
 }
@@ -243,7 +246,7 @@ function _testAnimateSpeakingCharacter() {
         const shotNumber = 0;
         const sceneNumber = 0;
         const isPrimary = true;
-        const actorID = isPrimary ? actor_1.ActorID.Sarah : actor_1.ActorID.Jennifer;
+        const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
         const shotType1 = videotimeline_1.ShotType.OTS_primaryActor;
         const shot1 = { shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
         const outFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/animated_frames/";

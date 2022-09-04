@@ -3,7 +3,7 @@ import fs from 'fs'
 import appRoot from 'app-root-path';
 import { CameraShot, VideoTimeline, ShotType } from './videotimeline';
 import { DynamicAssetManager } from '../Crew/dynamicassetgenerator';
-import { ActorID, ActorEmotion, isPrimaryActor} from '../CommonClasses/actor';
+import { ActorID, ActorEmotion, getPrimaryActor, getSecondaryActor} from '../CommonClasses/actor';
 
 const ANIMATION_FPS = 10
 
@@ -88,18 +88,21 @@ async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: str
     const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png"        
     
     const characterInfo: CharacterShotInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false })
+    console.log("addStaticCharacterToFrame. Info: ", characterInfo)
     const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
     const characterPosition = getCharacterPosition(characterInfo)        
     
     await addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile)    
 }
 
-function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraShot; isSpeaker: boolean; }): CharacterShotInfo{
-    const nonSpeakingActor = (cameraShot.speakingActorID == ActorID.Jennifer) ? ActorID.Sarah : ActorID.Jennifer
+function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraShot; isSpeaker: boolean; }): CharacterShotInfo{    
+    const nonSpeakingActor = (cameraShot.speakingActorID === ActorID.Jennifer) ? ActorID.Sarah : ActorID.Jennifer
     const actorID: ActorID = isSpeaker ? cameraShot.speakingActorID : nonSpeakingActor
     const emotion: ActorEmotion = ActorEmotion.Neutral //TODO: Need to include that in the cameraShot
-    const isPrimary = isPrimaryActor(actorID)
+    const isPrimary = (actorID === getPrimaryActor())
     const shotType = cameraShot.shotType
+
+    console.log("GetCharacterShotInfo. Speaker: " + cameraShot.speakingActorID + " Nonspeaker: " + nonSpeakingActor)
 
     return {actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType}
 }
@@ -126,9 +129,9 @@ function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
 function getCharacterPosition(characterInfo: CharacterShotInfo) {
     //TODO: Factor in Shot type
     if(characterInfo.isPrimary)
-        return {distanceFromLeft: 50, distanceFromTop: 100}
-    else
         return {distanceFromLeft: 250, distanceFromTop: 100}
+    else
+        return {distanceFromLeft: 50, distanceFromTop: 100}
 }
 
 async function generateShotBackground(imageFile: string, shotType: ShotType, outputFile: string){     
@@ -247,11 +250,12 @@ async function _testGenerateStatic(){
     const shotNumber = 0
     const sceneNumber = 0
     const isPrimary = false
-    const actorID = isPrimary ? ActorID.Sarah : ActorID.Jennifer
+    const actorID = isPrimary ? getPrimaryActor() : getSecondaryActor()
+    const speakingActor = actorID == getPrimaryActor() ? getSecondaryActor() : getPrimaryActor() //We can skip this but it's just to illustrate how we came up with it
 
     const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"
     const shotType1 = ShotType.OTS_primaryActor
-    const shot1: CameraShot = {shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}
+    const shot1: CameraShot = {shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: speakingActor, shotNumber: shotNumber, sceneNumber: sceneNumber}
     await addStaticCharacterToFrame(shot1, out1)
 }
 
@@ -262,7 +266,7 @@ async function _testAnimateSpeakingCharacter(){
     const shotNumber = 0
     const sceneNumber = 0
     const isPrimary = true
-    const actorID = isPrimary ? ActorID.Sarah : ActorID.Jennifer
+    const actorID = isPrimary ? getPrimaryActor() : getSecondaryActor()
 
     const shotType1 = ShotType.OTS_primaryActor
     const shot1: CameraShot = {shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    

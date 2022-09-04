@@ -60,6 +60,7 @@ async function animateSpeakingCharacter(cameraShot: CameraShot, outputFolder: st
     const numberOfFrames = Math.round((cameraShot.endTime - cameraShot.startTime) /1000*ANIMATION_FPS)
     
     let curMouthPosition = 0  
+    const animationPromises: Promise<void>[] = []
     for(let frameNum = 0; frameNum < numberOfFrames; frameNum++){
         if(curMouthPosition == 0) curMouthPosition = 1
         else if(curMouthPosition == 2) curMouthPosition = 1
@@ -69,8 +70,11 @@ async function animateSpeakingCharacter(cameraShot: CameraShot, outputFolder: st
         const characterImage = getCharacterImageFolder(characterInfo) + curMouthPosition + ".png"
         const outputFile = outputFolder + frameNum + ".png"
 
-        await addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0}) //TODO: Convert into promise chain
-    }    
+        const addCharPromise = addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0}) //TODO: Convert into promise chain
+        animationPromises.push(addCharPromise)
+    }
+    
+    await Promise.all(animationPromises)
 }
 
 //TODO: Remember to make all directories before calling these
@@ -207,7 +211,7 @@ async function _testAddCharToFrame(){
     const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png"
     const position_int: CharacterPosition = {distanceFromTop: 100, distanceFromLeft: 10}
     const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png"
-    await addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int })
+    await addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int, blur: 2 })
 
 
     //Actual frame
@@ -216,7 +220,7 @@ async function _testAddCharToFrame(){
     const position_actual: CharacterPosition = {distanceFromTop: 160, distanceFromLeft: 300}
     const outputFile_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/frame1.png"
 
-    addCharacterToFrame({ frameImage: frameImage_actual, characterImage: characterImage_actual, position: position_actual, outputFile: outputFile_actual })
+    addCharacterToFrame({ frameImage: frameImage_actual, characterImage: characterImage_actual, position: position_actual, outputFile: outputFile_actual, blur: 0 })
 }
 
 async function _testGenerateShot(){

@@ -67,6 +67,7 @@ function animateSpeakingCharacter(cameraShot, outputFolder) {
         const characterPosition = getCharacterPosition(characterInfo);
         const numberOfFrames = Math.round((cameraShot.endTime - cameraShot.startTime) / 1000 * ANIMATION_FPS);
         let curMouthPosition = 0;
+        const animationPromises = [];
         for (let frameNum = 0; frameNum < numberOfFrames; frameNum++) {
             if (curMouthPosition == 0)
                 curMouthPosition = 1;
@@ -78,8 +79,10 @@ function animateSpeakingCharacter(cameraShot, outputFolder) {
                 curMouthPosition = 0;
             const characterImage = getCharacterImageFolder(characterInfo) + curMouthPosition + ".png";
             const outputFile = outputFolder + frameNum + ".png";
-            yield addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 }); //TODO: Convert into promise chain
+            const addCharPromise = addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 }); //TODO: Convert into promise chain
+            animationPromises.push(addCharPromise);
         }
+        yield Promise.all(animationPromises);
     });
 }
 //TODO: Remember to make all directories before calling these
@@ -205,13 +208,13 @@ function _testAddCharToFrame() {
         const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png";
         const position_int = { distanceFromTop: 100, distanceFromLeft: 10 };
         const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
-        yield addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int });
+        yield addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int, blur: 2 });
         //Actual frame
         const frameImage_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
         const characterImage_actual = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/0.png"; //TODO: Also factor in size
         const position_actual = { distanceFromTop: 160, distanceFromLeft: 300 };
         const outputFile_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/frame1.png";
-        addCharacterToFrame({ frameImage: frameImage_actual, characterImage: characterImage_actual, position: position_actual, outputFile: outputFile_actual });
+        addCharacterToFrame({ frameImage: frameImage_actual, characterImage: characterImage_actual, position: position_actual, outputFile: outputFile_actual, blur: 0 });
     });
 }
 function _testGenerateShot() {

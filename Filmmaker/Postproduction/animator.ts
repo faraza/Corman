@@ -131,7 +131,7 @@ function getCharacterPosition(characterInfo: CharacterShotInfo) {
     if(characterInfo.isPrimary)
         return {distanceFromLeft: 250, distanceFromTop: 100}
     else
-        return {distanceFromLeft: 50, distanceFromTop: 100}
+        return {distanceFromLeft: 20, distanceFromTop: 100}
 }
 
 async function generateShotBackground(imageFile: string, shotType: ShotType, outputFile: string){     
@@ -275,5 +275,5 @@ async function _testAnimateSpeakingCharacter(){
     await animateSpeakingCharacter(shot1, outFolder)
 }
 
-// _testAnimateSpeakingCharacter()
-_testGenerateStatic()
+_testAnimateSpeakingCharacter()
+// _testGenerateStatic()

@@ -134,7 +134,7 @@ function getCharacterPosition(characterInfo) {
     if (characterInfo.isPrimary)
         return { distanceFromLeft: 250, distanceFromTop: 100 };
     else
-        return { distanceFromLeft: 50, distanceFromTop: 100 };
+        return { distanceFromLeft: 20, distanceFromTop: 100 };
 }
 function generateShotBackground(imageFile, shotType, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -253,5 +253,5 @@ function _testAnimateSpeakingCharacter() {
         yield animateSpeakingCharacter(shot1, outFolder);
     });
 }
-// _testAnimateSpeakingCharacter()
-_testGenerateStatic();
+_testAnimateSpeakingCharacter();
+// _testGenerateStatic()

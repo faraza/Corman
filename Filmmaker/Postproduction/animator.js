@@ -78,20 +78,28 @@ function animateSpeakingCharacter(cameraShot, outputFolder) {
                 curMouthPosition = 0;
             const characterImage = getCharacterImageFolder(characterInfo) + curMouthPosition + ".png";
             const outputFile = outputFolder + frameNum + ".png";
-            yield addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile); //TODO: Convert into promise chain
+            yield addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 }); //TODO: Convert into promise chain
         }
     });
 }
-//Assumes that the static image (cut + blurred background, static character) has already been generated
-//TODO: Character directory should be the directory for the character in that shot. It should factor in the character's size and whether or not the character is in motion
 //TODO: Remember to make all directories before calling these
-function addCharacterToFrame(frameImage, characterImage, position, outputFile) {
+function addCharacterToFrame({ frameImage, characterImage, position, outputFile, blur }) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, sharp_1.default)(frameImage)
-            .composite([
-            { input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft }
-        ])
-            .toFile(outputFile);
+        if (blur > 0) {
+            yield (0, sharp_1.default)(frameImage)
+                .composite([
+                { input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft }
+            ])
+                .blur(blur) //TODO: Figure out why this is not working
+                .toFile(outputFile);
+        }
+        else {
+            yield (0, sharp_1.default)(frameImage)
+                .composite([
+                { input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft }
+            ])
+                .toFile(outputFile);
+        }
     });
 }
 function addStaticCharacterToFrame(cameraShot, outputFile) {
@@ -101,7 +109,7 @@ function addStaticCharacterToFrame(cameraShot, outputFile) {
         console.log("addStaticCharacterToFrame. Info: ", characterInfo);
         const characterImage = getCharacterImageFolder(characterInfo) + "1.png";
         const characterPosition = getCharacterPosition(characterInfo);
-        yield addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile);
+        yield addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 2 });
     });
 }
 function getCharacterShotInfo({ cameraShot, isSpeaker }) {
@@ -132,7 +140,7 @@ function getCharacterImageFolder(characterInfo) {
 function getCharacterPosition(characterInfo) {
     //TODO: Factor in Shot type
     if (characterInfo.isPrimary)
-        return { distanceFromLeft: 250, distanceFromTop: 100 };
+        return { distanceFromLeft: 310, distanceFromTop: 200 };
     else
         return { distanceFromLeft: 20, distanceFromTop: 100 };
 }
@@ -197,13 +205,13 @@ function _testAddCharToFrame() {
         const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png";
         const position_int = { distanceFromTop: 100, distanceFromLeft: 10 };
         const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
-        yield addCharacterToFrame(frame_int, charImage_int, position_int, output_int);
+        yield addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int });
         //Actual frame
         const frameImage_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
         const characterImage_actual = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/0.png"; //TODO: Also factor in size
         const position_actual = { distanceFromTop: 160, distanceFromLeft: 300 };
         const outputFile_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/frame1.png";
-        addCharacterToFrame(frameImage_actual, characterImage_actual, position_actual, outputFile_actual);
+        addCharacterToFrame({ frameImage: frameImage_actual, characterImage: characterImage_actual, position: position_actual, outputFile: outputFile_actual });
     });
 }
 function _testGenerateShot() {

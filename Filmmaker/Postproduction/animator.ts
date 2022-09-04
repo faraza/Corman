@@ -69,19 +69,27 @@ async function animateSpeakingCharacter(cameraShot: CameraShot, outputFolder: st
         const characterImage = getCharacterImageFolder(characterInfo) + curMouthPosition + ".png"
         const outputFile = outputFolder + frameNum + ".png"
 
-        await addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile) //TODO: Convert into promise chain
+        await addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0}) //TODO: Convert into promise chain
     }    
 }
 
-//Assumes that the static image (cut + blurred background, static character) has already been generated
-    //TODO: Character directory should be the directory for the character in that shot. It should factor in the character's size and whether or not the character is in motion
-    //TODO: Remember to make all directories before calling these
-async function addCharacterToFrame(frameImage: string, characterImage: string, position: CharacterPosition, outputFile: string ){     
-    await sharp(frameImage)
-    .composite([
+//TODO: Remember to make all directories before calling these
+async function addCharacterToFrame({ frameImage, characterImage, position, outputFile, blur }: { frameImage: string; characterImage: string; position: CharacterPosition; outputFile: string; blur: number }){     
+    if(blur > 0){
+        await sharp(frameImage)
+        .composite([
+            {input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft} 
+        ])
+        .blur(blur) //TODO: Figure out why this is not working
+        .toFile(outputFile)
+    }
+    else{
+        await sharp(frameImage)
+        .composite([
         {input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft} 
-    ])
+    ])    
     .toFile(outputFile)
+    }    
 }
 
 async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: string){   //TODO: remove outputFile param and get it from fileManager
@@ -92,7 +100,7 @@ async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: str
     const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
     const characterPosition = getCharacterPosition(characterInfo)        
     
-    await addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile)    
+    await addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 2 })    
 }
 
 function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraShot; isSpeaker: boolean; }): CharacterShotInfo{    
@@ -129,7 +137,7 @@ function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
 function getCharacterPosition(characterInfo: CharacterShotInfo) {
     //TODO: Factor in Shot type
     if(characterInfo.isPrimary)
-        return {distanceFromLeft: 250, distanceFromTop: 100}
+        return {distanceFromLeft: 310, distanceFromTop: 200}
     else
         return {distanceFromLeft: 20, distanceFromTop: 100}
 }
@@ -199,7 +207,7 @@ async function _testAddCharToFrame(){
     const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png"
     const position_int: CharacterPosition = {distanceFromTop: 100, distanceFromLeft: 10}
     const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png"
-    await addCharacterToFrame(frame_int, charImage_int, position_int, output_int)
+    await addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int })
 
 
     //Actual frame
@@ -208,7 +216,7 @@ async function _testAddCharToFrame(){
     const position_actual: CharacterPosition = {distanceFromTop: 160, distanceFromLeft: 300}
     const outputFile_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/frame1.png"
 
-    addCharacterToFrame(frameImage_actual, characterImage_actual, position_actual, outputFile_actual)
+    addCharacterToFrame({ frameImage: frameImage_actual, characterImage: characterImage_actual, position: position_actual, outputFile: outputFile_actual })
 }
 
 async function _testGenerateShot(){

@@ -51,6 +51,28 @@ async function animateShot(camerashot: CameraShot){
     }
 }
 
+async function animateSpeakingCharacter(cameraShot: CameraShot, outputFolder: string){    
+    const frameImage = getCameraShotFolder(cameraShot) + "finalShot.png"
+
+    const characterInfo: CharacterShotInfo = getCharacterShotInfo({ cameraShot, isSpeaker: true})
+    const characterPosition = getCharacterPosition(characterInfo)        
+    
+    const numberOfFrames = Math.round((cameraShot.endTime - cameraShot.startTime) /1000*ANIMATION_FPS)
+    
+    let curMouthPosition = 0  
+    for(let frameNum = 0; frameNum < numberOfFrames; frameNum++){
+        if(curMouthPosition == 0) curMouthPosition = 1
+        else if(curMouthPosition == 2) curMouthPosition = 1
+        else if(Math.random() > .5) curMouthPosition = 2 
+        else curMouthPosition = 0
+
+        const characterImage = getCharacterImageFolder(characterInfo) + curMouthPosition + ".png"
+        const outputFile = outputFolder + frameNum + ".png"
+
+        await addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile) //TODO: Convert into promise chain
+    }    
+}
+
 //Assumes that the static image (cut + blurred background, static character) has already been generated
     //TODO: Character directory should be the directory for the character in that shot. It should factor in the character's size and whether or not the character is in motion
     //TODO: Remember to make all directories before calling these
@@ -62,26 +84,33 @@ async function addCharacterToFrame(frameImage: string, characterImage: string, p
     .toFile(outputFile)
 }
 
-async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: string){  
+async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: string){   //TODO: remove outputFile param and get it from fileManager
     const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png"        
     
-    const actorID: ActorID = (cameraShot.speakingActorID == ActorID.Jennifer) ? ActorID.Sarah : ActorID.Jennifer
-    const emotion: ActorEmotion = ActorEmotion.Neutral //TODO: Need to include that in the cameraShot
-    const isPrimary = isPrimaryActor(actorID)
-    const shotType = cameraShot.shotType
-
-    const characterInfo: CharacterShotInfo = {actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType}
+    const characterInfo: CharacterShotInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false })
     const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
     const characterPosition = getCharacterPosition(characterInfo)        
     
     await addCharacterToFrame(frameImage, characterImage, characterPosition, outputFile)    
 }
 
+function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraShot; isSpeaker: boolean; }): CharacterShotInfo{
+    const nonSpeakingActor = (cameraShot.speakingActorID == ActorID.Jennifer) ? ActorID.Sarah : ActorID.Jennifer
+    const actorID: ActorID = isSpeaker ? cameraShot.speakingActorID : nonSpeakingActor
+    const emotion: ActorEmotion = ActorEmotion.Neutral //TODO: Need to include that in the cameraShot
+    const isPrimary = isPrimaryActor(actorID)
+    const shotType = cameraShot.shotType
+
+    return {actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType}
+}
+
+//TODO
 function getCameraShotFolder(cameraShot: CameraShot): string{
     //TODO
     return "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/"    
 }
 
+//TODO
 function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
     //TODO: Factor in all the other stuff
     if(characterInfo.isPrimary){
@@ -93,6 +122,7 @@ function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
     
 }
 
+//TODO
 function getCharacterPosition(characterInfo: CharacterShotInfo) {
     //TODO: Factor in Shot type
     if(characterInfo.isPrimary)
@@ -225,4 +255,21 @@ async function _testGenerateStatic(){
     await addStaticCharacterToFrame(shot1, out1)
 }
 
-// _testGenerateStatic()
+async function _testAnimateSpeakingCharacter(){
+    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"
+    const startTime = 0
+    const endTime = 4000
+    const shotNumber = 0
+    const sceneNumber = 0
+    const isPrimary = true
+    const actorID = isPrimary ? ActorID.Sarah : ActorID.Jennifer
+
+    const shotType1 = ShotType.OTS_primaryActor
+    const shot1: CameraShot = {shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    
+
+    const outFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/animated_frames/"
+    await animateSpeakingCharacter(shot1, outFolder)
+}
+
+// _testAnimateSpeakingCharacter()
+_testGenerateStatic()

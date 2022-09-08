@@ -8,11 +8,7 @@ import { ActorID, ActorEmotion, getPrimaryActor, getSecondaryActor} from '../Com
 const ANIMATION_FPS = 10
 
 
-export async function animateVideoTimeline(videoTimeline: VideoTimeline, assets: DynamicAssetManager){
-    //TODO: Generate shot backgrounds - need to cut background image location to do that
-        //TODO: Blur shot background (if appropriate)
-        //TODO: Add secondary character to shot (if appropriate)
-    
+export async function animateVideoTimeline(videoTimeline: VideoTimeline, assets: DynamicAssetManager){        
     const fileManager = new AnimationFileManager(assets.movieID)
     
     videoTimeline.cameraTrack.forEach((cameraShot)=>{
@@ -31,29 +27,25 @@ export async function animateVideoTimeline(videoTimeline: VideoTimeline, assets:
  * @param fileoutputDirectory //Folder to drop the final video file in
  */
 async function animateShot(camerashot: CameraShot){
-    //Get number of frames - 
-    //For each frame, choose a mouth position
-    //Add the character to the frame
+    console.log("AnimateShot. 1")
 
-
-    const numberOfFrames = Math.round((camerashot.endTime - camerashot.startTime) /1000*ANIMATION_FPS)
-    
-    let curMouthPosition = 0        
-    for(let frameNum = 0; frameNum < numberOfFrames; frameNum++){
-        if(curMouthPosition == 0) curMouthPosition = 1
-        else if(curMouthPosition == 2) curMouthPosition = 1
-        else if(Math.random() > .5) curMouthPosition = 2 
-        else curMouthPosition = 0
-                
-        //TODO: Create file folder if it doesn't exist
-        
-        const frameImageLocation = ""        
-    }
+    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/background.png" //TODO: File manager
+    const shotFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/shots/0/"
+    const backgroundOut = shotFolder + "processedShot.png" //TODO: File manager
+    const compositedOut = shotFolder + "processedShot_composited.png" //TODO: File manager
+    const animatedOut = shotFolder + "animated_frames/"
+    await generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut)
+    await addStaticCharacterToFrame(camerashot, shotFolder + "processedShot_composited.png")
+    await animateSpeakingCharacter(compositedOut, camerashot, animatedOut)            
 }
 
-async function animateSpeakingCharacter(cameraShot: CameraShot, outputFolder: string){    
-    const frameImage = getCameraShotFolder(cameraShot) + "finalShot.png"
-
+/**
+ * This must be called after the shot background has already been generated, or it will throw an error!
+ * @param cameraShot 
+ * @param outputFolder 
+ */
+async function animateSpeakingCharacter(frameImage: string, cameraShot: CameraShot, outputFolder: string){    
+    
     const characterInfo: CharacterShotInfo = getCharacterShotInfo({ cameraShot, isSpeaker: true})
     const characterPosition = getCharacterPosition(characterInfo)        
     
@@ -100,11 +92,11 @@ async function addCharacterToFrame({ frameImage, characterImage, position, outpu
     }    
 }
 
-async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: string){   //TODO: remove outputFile param and get it from fileManager
+//TODO: remove outputFile param and get it from fileManager
+async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: string){   
     const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png"        
     
     const characterInfo: CharacterShotInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false })
-    console.log("addStaticCharacterToFrame. Info: ", characterInfo)
     const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
     const characterPosition = getCharacterPosition(characterInfo)        
     
@@ -117,8 +109,6 @@ function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraSho
     const emotion: ActorEmotion = ActorEmotion.Neutral //TODO: Need to include that in the cameraShot
     const isPrimary = (actorID === getPrimaryActor())
     const shotType = cameraShot.shotType
-
-    console.log("GetCharacterShotInfo. Speaker: " + cameraShot.speakingActorID + " Nonspeaker: " + nonSpeakingActor)
 
     return {actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType}
 }
@@ -278,7 +268,16 @@ async function _testGenerateStatic(){
 }
 
 async function _testAnimateSpeakingCharacter(){
-    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"
+    const frameImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"
+    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png"
+    
+    const shot1: CameraShot = _getTestShot(backgroundImage)
+
+    const outFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/animated_frames/"
+    await animateSpeakingCharacter(frameImage, shot1, outFolder)
+}
+
+function _getTestShot(backgroundImagePath: string): CameraShot{
     const startTime = 0
     const endTime = 4000
     const shotNumber = 0
@@ -286,13 +285,17 @@ async function _testAnimateSpeakingCharacter(){
     const isPrimary = true
     const actorID = isPrimary ? getPrimaryActor() : getSecondaryActor()
 
-    const shotType1 = ShotType.OTS_primaryActor
-    const shot1: CameraShot = {shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    
+    const shotType = ShotType.OTS_primaryActor
+    const shot: CameraShot = {shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    
 
-    const outFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/animated_frames/"
-    await animateSpeakingCharacter(shot1, outFolder)
+    return shot
 }
 
-// _testAnimateSpeakingCharacter()
-// _testGenerateStatic()
-_testAddCharToFrame()
+async function _testAnimateShot(){    
+    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png" //TODO: Use filemanager
+    const shot = _getTestShot(backgroundImage)
+    animateShot(shot)    
+}
+
+
+_testAnimateShot()

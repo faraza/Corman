@@ -20,9 +20,6 @@ const actor_1 = require("../CommonClasses/actor");
 const ANIMATION_FPS = 10;
 function animateVideoTimeline(videoTimeline, assets) {
     return __awaiter(this, void 0, void 0, function* () {
-        //TODO: Generate shot backgrounds - need to cut background image location to do that
-        //TODO: Blur shot background (if appropriate)
-        //TODO: Add secondary character to shot (if appropriate)
         const fileManager = new AnimationFileManager(assets.movieID);
         videoTimeline.cameraTrack.forEach((cameraShot) => {
             animateShot(cameraShot);
@@ -41,28 +38,24 @@ exports.animateVideoTimeline = animateVideoTimeline;
  */
 function animateShot(camerashot) {
     return __awaiter(this, void 0, void 0, function* () {
-        //Get number of frames - 
-        //For each frame, choose a mouth position
-        //Add the character to the frame
-        const numberOfFrames = Math.round((camerashot.endTime - camerashot.startTime) / 1000 * ANIMATION_FPS);
-        let curMouthPosition = 0;
-        for (let frameNum = 0; frameNum < numberOfFrames; frameNum++) {
-            if (curMouthPosition == 0)
-                curMouthPosition = 1;
-            else if (curMouthPosition == 2)
-                curMouthPosition = 1;
-            else if (Math.random() > .5)
-                curMouthPosition = 2;
-            else
-                curMouthPosition = 0;
-            //TODO: Create file folder if it doesn't exist
-            const frameImageLocation = "";
-        }
+        console.log("AnimateShot. 1");
+        const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/background.png"; //TODO: File manager
+        const shotFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/shots/0/";
+        const backgroundOut = shotFolder + "processedShot.png"; //TODO: File manager
+        const compositedOut = shotFolder + "processedShot_composited.png"; //TODO: File manager
+        const animatedOut = shotFolder + "animated_frames/";
+        yield generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut);
+        yield addStaticCharacterToFrame(camerashot, shotFolder + "processedShot_composited.png");
+        yield animateSpeakingCharacter(compositedOut, camerashot, animatedOut);
     });
 }
-function animateSpeakingCharacter(cameraShot, outputFolder) {
+/**
+ * This must be called after the shot background has already been generated, or it will throw an error!
+ * @param cameraShot
+ * @param outputFolder
+ */
+function animateSpeakingCharacter(frameImage, cameraShot, outputFolder) {
     return __awaiter(this, void 0, void 0, function* () {
-        const frameImage = getCameraShotFolder(cameraShot) + "finalShot.png";
         const characterInfo = getCharacterShotInfo({ cameraShot, isSpeaker: true });
         const characterPosition = getCharacterPosition(characterInfo);
         const numberOfFrames = Math.round((cameraShot.endTime - cameraShot.startTime) / 1000 * ANIMATION_FPS);
@@ -109,11 +102,11 @@ function addCharacterToFrame({ frameImage, characterImage, position, outputFile,
         }
     });
 }
+//TODO: remove outputFile param and get it from fileManager
 function addStaticCharacterToFrame(cameraShot, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
         const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png";
         const characterInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false });
-        console.log("addStaticCharacterToFrame. Info: ", characterInfo);
         const characterImage = getCharacterImageFolder(characterInfo) + "1.png";
         const characterPosition = getCharacterPosition(characterInfo);
         yield addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 });
@@ -125,7 +118,6 @@ function getCharacterShotInfo({ cameraShot, isSpeaker }) {
     const emotion = actor_1.ActorEmotion.Neutral; //TODO: Need to include that in the cameraShot
     const isPrimary = (actorID === (0, actor_1.getPrimaryActor)());
     const shotType = cameraShot.shotType;
-    console.log("GetCharacterShotInfo. Speaker: " + cameraShot.speakingActorID + " Nonspeaker: " + nonSpeakingActor);
     return { actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType };
 }
 //TODO
@@ -256,19 +248,29 @@ function _testGenerateStatic() {
 }
 function _testAnimateSpeakingCharacter() {
     return __awaiter(this, void 0, void 0, function* () {
-        const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png";
-        const startTime = 0;
-        const endTime = 4000;
-        const shotNumber = 0;
-        const sceneNumber = 0;
-        const isPrimary = true;
-        const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
-        const shotType1 = videotimeline_1.ShotType.OTS_primaryActor;
-        const shot1 = { shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
+        const frameImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png";
+        const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/background.png";
+        const shot1 = _getTestShot(backgroundImage);
         const outFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/animated_frames/";
-        yield animateSpeakingCharacter(shot1, outFolder);
+        yield animateSpeakingCharacter(frameImage, shot1, outFolder);
     });
 }
-// _testAnimateSpeakingCharacter()
-// _testGenerateStatic()
-_testAddCharToFrame();
+function _getTestShot(backgroundImagePath) {
+    const startTime = 0;
+    const endTime = 4000;
+    const shotNumber = 0;
+    const sceneNumber = 0;
+    const isPrimary = true;
+    const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
+    const shotType = videotimeline_1.ShotType.OTS_primaryActor;
+    const shot = { shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
+    return shot;
+}
+function _testAnimateShot() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"; //TODO: Use filemanager
+        const shot = _getTestShot(backgroundImage);
+        animateShot(shot);
+    });
+}
+_testAnimateShot();

@@ -79,13 +79,17 @@ function animateSpeakingCharacter(cameraShot, outputFolder) {
                 curMouthPosition = 0;
             const characterImage = getCharacterImageFolder(characterInfo) + curMouthPosition + ".png";
             const outputFile = outputFolder + frameNum + ".png";
-            const addCharPromise = addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 }); //TODO: Convert into promise chain
+            const addCharPromise = addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 });
             animationPromises.push(addCharPromise);
         }
         yield Promise.all(animationPromises);
     });
 }
 //TODO: Remember to make all directories before calling these
+/**
+ *
+ * Blur doesn't work. It blurs the BG but not the character TODO: Figure out why. Just use 0
+ */
 function addCharacterToFrame({ frameImage, characterImage, position, outputFile, blur }) {
     return __awaiter(this, void 0, void 0, function* () {
         if (blur > 0) {
@@ -93,7 +97,7 @@ function addCharacterToFrame({ frameImage, characterImage, position, outputFile,
                 .composite([
                 { input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft }
             ])
-                .blur(blur) //TODO: Figure out why this is not working
+                .blur(blur) //TODO: Figure out why this is not working on composited part of image
                 .toFile(outputFile);
         }
         else {
@@ -112,7 +116,7 @@ function addStaticCharacterToFrame(cameraShot, outputFile) {
         console.log("addStaticCharacterToFrame. Info: ", characterInfo);
         const characterImage = getCharacterImageFolder(characterInfo) + "1.png";
         const characterPosition = getCharacterPosition(characterInfo);
-        yield addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 2 });
+        yield addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 });
     });
 }
 function getCharacterShotInfo({ cameraShot, isSpeaker }) {
@@ -139,7 +143,7 @@ function getCharacterImageFolder(characterInfo) {
         return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/";
     }
 }
-//TODO
+//TODO: Figure out param
 function getCharacterPosition(characterInfo) {
     //TODO: Factor in Shot type
     if (characterInfo.isPrimary)
@@ -147,6 +151,7 @@ function getCharacterPosition(characterInfo) {
     else
         return { distanceFromLeft: 20, distanceFromTop: 100 };
 }
+//TODO: Figure out params
 function generateShotBackground(imageFile, shotType, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
         if (shotType === videotimeline_1.ShotType.wideshot) { //TODO: Do some stuff w/ cropping so it looks different from OTS. But it's fine for now
@@ -154,7 +159,7 @@ function generateShotBackground(imageFile, shotType, outputFile) {
                 .blur(1)
                 .toFile(outputFile);
         }
-        else if (shotType === videotimeline_1.ShotType.OTS_primaryActor) { //TODO: Shot that should be reversed
+        else if (shotType === videotimeline_1.ShotType.OTS_primaryActor) {
             yield (0, sharp_1.default)(imageFile)
                 .blur(3) //TODO: Get right param        
                 .toFile(outputFile);
@@ -204,11 +209,11 @@ function _testAddCharToFrame() {
     return __awaiter(this, void 0, void 0, function* () {
         //Intermediate    
         //TODO
-        const frame_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/processedshotbackground.png";
+        const frame_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/processedshot.png";
         const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png";
         const position_int = { distanceFromTop: 100, distanceFromLeft: 10 };
         const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
-        yield addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int, blur: 2 });
+        yield addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int, blur: 0 });
         //Actual frame
         const frameImage_actual = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png";
         const characterImage_actual = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/0.png"; //TODO: Also factor in size
@@ -264,5 +269,6 @@ function _testAnimateSpeakingCharacter() {
         yield animateSpeakingCharacter(shot1, outFolder);
     });
 }
-_testAnimateSpeakingCharacter();
+// _testAnimateSpeakingCharacter()
 // _testGenerateStatic()
+_testAddCharToFrame();

@@ -70,7 +70,7 @@ async function animateSpeakingCharacter(cameraShot: CameraShot, outputFolder: st
         const characterImage = getCharacterImageFolder(characterInfo) + curMouthPosition + ".png"
         const outputFile = outputFolder + frameNum + ".png"
 
-        const addCharPromise = addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0}) //TODO: Convert into promise chain
+        const addCharPromise = addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0})
         animationPromises.push(addCharPromise)
     }
     
@@ -78,13 +78,17 @@ async function animateSpeakingCharacter(cameraShot: CameraShot, outputFolder: st
 }
 
 //TODO: Remember to make all directories before calling these
+/**
+ * 
+ * Blur doesn't work. It blurs the BG but not the character TODO: Figure out why. Just use 0
+ */
 async function addCharacterToFrame({ frameImage, characterImage, position, outputFile, blur }: { frameImage: string; characterImage: string; position: CharacterPosition; outputFile: string; blur: number }){     
     if(blur > 0){
         await sharp(frameImage)
         .composite([
             {input: characterImage, top: position.distanceFromTop, left: position.distanceFromLeft} 
         ])
-        .blur(blur) //TODO: Figure out why this is not working
+        .blur(blur) //TODO: Figure out why this is not working on composited part of image
         .toFile(outputFile)
     }
     else{
@@ -104,7 +108,7 @@ async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: str
     const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
     const characterPosition = getCharacterPosition(characterInfo)        
     
-    await addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 2 })    
+    await addCharacterToFrame({ frameImage: frameImage, characterImage: characterImage, position: characterPosition, outputFile: outputFile, blur: 0 })    
 }
 
 function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraShot; isSpeaker: boolean; }): CharacterShotInfo{    
@@ -137,7 +141,7 @@ function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
     
 }
 
-//TODO
+//TODO: Figure out param
 function getCharacterPosition(characterInfo: CharacterShotInfo) {
     //TODO: Factor in Shot type
     if(characterInfo.isPrimary)
@@ -146,13 +150,14 @@ function getCharacterPosition(characterInfo: CharacterShotInfo) {
         return {distanceFromLeft: 20, distanceFromTop: 100}
 }
 
+//TODO: Figure out params
 async function generateShotBackground(imageFile: string, shotType: ShotType, outputFile: string){     
     if(shotType === ShotType.wideshot){ //TODO: Do some stuff w/ cropping so it looks different from OTS. But it's fine for now
         await sharp(imageFile)
         .blur(1)
         .toFile(outputFile)                
     }
-    else if (shotType === ShotType.OTS_primaryActor){ //TODO: Shot that should be reversed
+    else if (shotType === ShotType.OTS_primaryActor){
         await sharp(imageFile)
         .blur(3) //TODO: Get right param        
         .toFile(outputFile)        
@@ -204,14 +209,27 @@ class AnimationFileManager{
 
 }
 
+type CharacterPosition = {
+    distanceFromLeft: number,
+    distanceFromTop: number 
+}
+
+type CharacterShotInfo = {
+    actorID: ActorID,
+    emotion: ActorEmotion,
+    isPrimary: boolean,
+    shotType: ShotType
+}
+
+
 async function _testAddCharToFrame(){
     //Intermediate    
         //TODO
-    const frame_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/processedshotbackground.png"
+    const frame_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/processedshot.png"
     const charImage_int = "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/1.png"
     const position_int: CharacterPosition = {distanceFromTop: 100, distanceFromLeft: 10}
     const output_int = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalizedshotbackground.png"
-    await addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int, blur: 2 })
+    await addCharacterToFrame({ frameImage: frame_int, characterImage: charImage_int, position: position_int, outputFile: output_int, blur: 0 })
 
 
     //Actual frame
@@ -241,18 +259,6 @@ async function _testGenerateShot(){
 
     const out5 = outbase + "_wideshot.png"
     generateShotBackground(backgroundImage, ShotType.wideshot, out5)
-}
-
-type CharacterPosition = {
-    distanceFromLeft: number,
-    distanceFromTop: number 
-}
-
-type CharacterShotInfo = {
-    actorID: ActorID,
-    emotion: ActorEmotion,
-    isPrimary: boolean,
-    shotType: ShotType
 }
 
 async function _testGenerateStatic(){
@@ -287,5 +293,6 @@ async function _testAnimateSpeakingCharacter(){
     await animateSpeakingCharacter(shot1, outFolder)
 }
 
-_testAnimateSpeakingCharacter()
+// _testAnimateSpeakingCharacter()
 // _testGenerateStatic()
+_testAddCharToFrame()

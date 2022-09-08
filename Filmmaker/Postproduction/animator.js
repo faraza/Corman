@@ -58,12 +58,14 @@ function animateSpeakingCharacter(frameImage, cameraShot, outputFolder) {
         const characterInfo = getCharacterShotInfo({ cameraShot, isSpeaker: true });
         const characterPosition = getCharacterPosition(characterInfo);
         const numberOfFrames = Math.round((cameraShot.endTime - cameraShot.startTime) / 1000 * ANIMATION_FPS);
-        let curMouthPosition = 0;
+        let curMouthPosition = -1;
         const animationPromises = [];
         for (let frameNum = 0; frameNum < numberOfFrames; frameNum++) {
-            if (curMouthPosition == 0)
+            if (curMouthPosition === -1)
+                curMouthPosition = 0; //Just for the first one
+            else if (curMouthPosition === 0)
                 curMouthPosition = 1;
-            else if (curMouthPosition == 2)
+            else if (curMouthPosition === 2)
                 curMouthPosition = 1;
             else if (Math.random() > .5)
                 curMouthPosition = 2;
@@ -113,18 +115,26 @@ function getCharacterShotInfo({ cameraShot, isSpeaker }) {
     return { actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType };
 }
 //TODO
-function getCharacterImageFolder(characterInfo) {
+function getCharacterImageFolder(charShotInfo) {
     const charactersFolder = app_root_path_1.default + "/Assets/static_assets/characters";
-    //TODO: Factor in all the other stuff
-    if (characterInfo.isPrimary) {
-        const shotType = "ots"; //TODO
-        const emotion = "neutral"; //TODO
-        const character = "maho";
-        return charactersFolder + "/" + character + "/" + shotType + "/" + emotion + "/";
+    const charName = charShotInfo.isPrimary ? "maho" : "suzuha";
+    if (charShotInfo.shotType === videotimeline_1.ShotType.OTS_primaryActor && !charShotInfo.isPrimary) {
+        return charactersFolder + "/" + charName + "/back/";
     }
-    else {
-        const character = "suzuha";
-        return charactersFolder + "/" + character + "/back/";
+    else if (charShotInfo.shotType === videotimeline_1.ShotType.OTS_secondaryActor && charShotInfo.isPrimary) {
+        return charactersFolder + "/" + charName + "/back/";
+    }
+    const emotion = "neutral"; //TODO
+    const shotType = convertShotTypeToFolderName(charShotInfo.shotType);
+    return charactersFolder + "/" + charName + "/" + shotType + "/" + emotion + "/";
+}
+function convertShotTypeToFolderName(shotType) {
+    switch (shotType) {
+        case videotimeline_1.ShotType.OTS_primaryActor: return "ots";
+        case videotimeline_1.ShotType.OTS_secondaryActor: return "ots";
+        case videotimeline_1.ShotType.closeup_primaryActor: return "closeup";
+        case videotimeline_1.ShotType.closeup_secondaryActor: return "closeup";
+        case videotimeline_1.ShotType.wideshot: return "wide";
     }
 }
 //TODO: Figure out param
@@ -256,9 +266,9 @@ function _getTestShot(backgroundImagePath) {
     const endTime = 4000;
     const shotNumber = 0;
     const sceneNumber = 0;
-    const isPrimary = true;
+    const isPrimary = false;
     const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
-    const shotType = videotimeline_1.ShotType.OTS_primaryActor;
+    const shotType = videotimeline_1.ShotType.OTS_secondaryActor;
     const shot = { shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
     return shot;
 }

@@ -48,11 +48,12 @@ async function animateSpeakingCharacter(frameImage: string, cameraShot: CameraSh
     
     const numberOfFrames = Math.round((cameraShot.endTime - cameraShot.startTime) /1000*ANIMATION_FPS)
     
-    let curMouthPosition = 0  
+    let curMouthPosition = -1  
     const animationPromises: Promise<void>[] = []
     for(let frameNum = 0; frameNum < numberOfFrames; frameNum++){
-        if(curMouthPosition == 0) curMouthPosition = 1
-        else if(curMouthPosition == 2) curMouthPosition = 1
+        if(curMouthPosition === -1) curMouthPosition = 0 //Just for the first one
+        else if(curMouthPosition === 0) curMouthPosition = 1
+        else if(curMouthPosition === 2) curMouthPosition = 1
         else if(Math.random() > .5) curMouthPosition = 2 
         else curMouthPosition = 0
 
@@ -104,20 +105,30 @@ function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraSho
 }
 
 //TODO
-function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
+function getCharacterImageFolder(charShotInfo: CharacterShotInfo): string{
     const charactersFolder = appRoot + "/Assets/static_assets/characters"
-    //TODO: Factor in all the other stuff
-    if(characterInfo.isPrimary){
-        const shotType = "ots" //TODO
-        const emotion = "neutral" //TODO
-        const character = "maho"
-        return charactersFolder + "/" + character + "/" + shotType + "/" + emotion + "/"        
-    }
-    else{
-        const character = "suzuha"
-        return charactersFolder + "/" + character + "/back/"        
-    }
+    const charName = charShotInfo.isPrimary ? "maho" : "suzuha"
     
+    if(charShotInfo.shotType === ShotType.OTS_primaryActor && !charShotInfo.isPrimary){
+        return charactersFolder + "/" + charName + "/back/"  
+    }
+    else if (charShotInfo.shotType === ShotType.OTS_secondaryActor && charShotInfo.isPrimary){
+        return charactersFolder + "/" + charName + "/back/"  
+    }
+
+    const emotion = "neutral" //TODO
+    const shotType = convertShotTypeToFolderName(charShotInfo.shotType)
+    return charactersFolder + "/" + charName + "/" + shotType + "/" + emotion + "/"            
+}
+
+function convertShotTypeToFolderName(shotType: ShotType): string{
+    switch(shotType){
+        case ShotType.OTS_primaryActor: return "ots"
+        case ShotType.OTS_secondaryActor: return "ots"
+        case ShotType.closeup_primaryActor: return "closeup"
+        case ShotType.closeup_secondaryActor: return "closeup"
+        case ShotType.wideshot: return "wide"
+    }
 }
 
 //TODO: Figure out param
@@ -275,10 +286,10 @@ function _getTestShot(backgroundImagePath: string): CameraShot{
     const endTime = 4000
     const shotNumber = 0
     const sceneNumber = 0
-    const isPrimary = true
+    const isPrimary = false
     const actorID = isPrimary ? getPrimaryActor() : getSecondaryActor()
 
-    const shotType = ShotType.OTS_primaryActor
+    const shotType = ShotType.OTS_secondaryActor
     const shot: CameraShot = {shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    
 
     return shot

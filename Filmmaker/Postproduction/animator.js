@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.animateVideoTimeline = void 0;
 const sharp_1 = __importDefault(require("sharp"));
+const fs_extra_1 = __importDefault(require("fs-extra"));
 const app_root_path_1 = __importDefault(require("app-root-path"));
 const videotimeline_1 = require("./videotimeline");
 const actor_1 = require("../CommonClasses/actor");
@@ -32,25 +33,22 @@ function animateVideoTimeline(videoTimeline, assets) {
 exports.animateVideoTimeline = animateVideoTimeline;
 /**
  *
- * @param backgroundImageFilepath Make sure you've cut the image to match the shot you want. That image file path will be passed here
- * @param characterImageDirectory The directory that contains the character in the angle and the emotion that you want
- * @param timeInMS //How many ms to animate for
- * @param fileoutputDirectory //Folder to drop the final video file in
  */
 function animateShot(camerashot, animationFileManager) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("AnimateShot. 1");
         const backgroundImage = animationFileManager.getShotBackgroundImage(camerashot);
         const shotFolder = animationFileManager.getShotDirectory(camerashot);
-        const backgroundOut = shotFolder + "/processedShot.png"; //TODO: File manager
-        const compositedOut = shotFolder + "/processedShot_composited.png"; //TODO: File manager
+        const backgroundOut = shotFolder + "/processedShot.png";
+        const compositedOut = shotFolder + "/processedShot_composited.png";
         const animatedOut = shotFolder + "/animated_frames/";
+        yield fs_extra_1.default.ensureDir(animatedOut);
         yield generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut);
         yield addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut);
         yield animateSpeakingCharacter(compositedOut, camerashot, animatedOut);
     });
 }
 /**
+ * TODO: Make this handle speaking character not being in frame
  * This must be called after the shot background has already been generated, or it will throw an error!
  * @param cameraShot
  * @param outputFolder
@@ -79,11 +77,6 @@ function animateSpeakingCharacter(frameImage, cameraShot, outputFolder) {
         yield Promise.all(animationPromises);
     });
 }
-//TODO: Remember to make all directories before calling these
-/**
- *
- * Blur doesn't work. It blurs the BG but not the character TODO: Figure out why. Just use 0
- */
 function addCharacterToFrame({ frameImage, characterImage, position, outputFile, blur }) {
     return __awaiter(this, void 0, void 0, function* () {
         if (blur > 0) {
@@ -103,7 +96,6 @@ function addCharacterToFrame({ frameImage, characterImage, position, outputFile,
         }
     });
 }
-//TODO: remove outputFile param and get it from fileManager
 function addStaticCharacterToFrame(frameImage, cameraShot, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
         const characterInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false });
@@ -121,18 +113,18 @@ function getCharacterShotInfo({ cameraShot, isSpeaker }) {
     return { actorID: actorID, emotion: emotion, isPrimary: isPrimary, shotType: shotType };
 }
 //TODO
-function getCameraShotFolder(cameraShot) {
-    //TODO
-    return "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/";
-}
-//TODO
 function getCharacterImageFolder(characterInfo) {
+    const charactersFolder = app_root_path_1.default + "/Assets/static_assets/characters";
     //TODO: Factor in all the other stuff
     if (characterInfo.isPrimary) {
-        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/";
+        const shotType = "ots"; //TODO
+        const emotion = "neutral"; //TODO
+        const character = "maho";
+        return charactersFolder + "/" + character + "/" + shotType + "/" + emotion + "/";
     }
     else {
-        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/";
+        const character = "suzuha";
+        return charactersFolder + "/" + character + "/back/";
     }
 }
 //TODO: Figure out param

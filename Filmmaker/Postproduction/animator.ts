@@ -1,5 +1,5 @@
 import sharp from 'sharp'
-import fs from 'fs'
+import fse from 'fs-extra'
 import appRoot from 'app-root-path';
 import { CameraShot, VideoTimeline, ShotType } from './videotimeline';
 import { DynamicAssetManager } from '../Crew/dynamicassetgenerator';
@@ -22,25 +22,21 @@ export async function animateVideoTimeline(videoTimeline: VideoTimeline, assets:
 
 /**
  * 
- * @param backgroundImageFilepath Make sure you've cut the image to match the shot you want. That image file path will be passed here
- * @param characterImageDirectory The directory that contains the character in the angle and the emotion that you want
- * @param timeInMS //How many ms to animate for
- * @param fileoutputDirectory //Folder to drop the final video file in
  */
 async function animateShot(camerashot: CameraShot, animationFileManager: AnimationFileManager){
-    console.log("AnimateShot. 1")
-
     const backgroundImage = animationFileManager.getShotBackgroundImage(camerashot)
     const shotFolder = animationFileManager.getShotDirectory(camerashot)
-    const backgroundOut = shotFolder + "/processedShot.png" //TODO: File manager
-    const compositedOut = shotFolder + "/processedShot_composited.png" //TODO: File manager
+    const backgroundOut = shotFolder + "/processedShot.png"
+    const compositedOut = shotFolder + "/processedShot_composited.png"
     const animatedOut = shotFolder + "/animated_frames/"
+    await fse.ensureDir(animatedOut)
     await generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut)
     await addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut)
     await animateSpeakingCharacter(compositedOut, camerashot, animatedOut)            
 }
 
 /**
+ * TODO: Make this handle speaking character not being in frame
  * This must be called after the shot background has already been generated, or it will throw an error!
  * @param cameraShot 
  * @param outputFolder 
@@ -70,11 +66,7 @@ async function animateSpeakingCharacter(frameImage: string, cameraShot: CameraSh
     await Promise.all(animationPromises)
 }
 
-//TODO: Remember to make all directories before calling these
-/**
- * 
- * Blur doesn't work. It blurs the BG but not the character TODO: Figure out why. Just use 0
- */
+
 async function addCharacterToFrame({ frameImage, characterImage, position, outputFile, blur }: { frameImage: string; characterImage: string; position: CharacterPosition; outputFile: string; blur: number }){     
     if(blur > 0){
         await sharp(frameImage)
@@ -93,7 +85,6 @@ async function addCharacterToFrame({ frameImage, characterImage, position, outpu
     }    
 }
 
-//TODO: remove outputFile param and get it from fileManager
 async function addStaticCharacterToFrame(frameImage: string, cameraShot: CameraShot, outputFile: string){           
     const characterInfo: CharacterShotInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false })
     const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
@@ -113,19 +104,18 @@ function getCharacterShotInfo({ cameraShot, isSpeaker }: { cameraShot: CameraSho
 }
 
 //TODO
-function getCameraShotFolder(cameraShot: CameraShot): string{
-    //TODO
-    return "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/"    
-}
-
-//TODO
 function getCharacterImageFolder(characterInfo: CharacterShotInfo): string{
+    const charactersFolder = appRoot + "/Assets/static_assets/characters"
     //TODO: Factor in all the other stuff
     if(characterInfo.isPrimary){
-        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/ots/neutral/"
+        const shotType = "ots" //TODO
+        const emotion = "neutral" //TODO
+        const character = "maho"
+        return charactersFolder + "/" + character + "/" + shotType + "/" + emotion + "/"        
     }
     else{
-        return "/Users/farazabidi/Documents/Corman/Assets/static_assets/characters/maho/back/"
+        const character = "suzuha"
+        return charactersFolder + "/" + character + "/back/"        
     }
     
 }
@@ -198,7 +188,7 @@ class AnimationFileManager{
     
     private getRootFilePath(): string{
         return appRoot + "/Assets/dynamic_assets/" + this.movieID
-    }
+    }    
 
 }
 

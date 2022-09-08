@@ -21,8 +21,9 @@ const ANIMATION_FPS = 10;
 function animateVideoTimeline(videoTimeline, assets) {
     return __awaiter(this, void 0, void 0, function* () {
         const fileManager = new AnimationFileManager(assets.movieID);
+        //TODO: Gen folders for each shot and drop background image there
         videoTimeline.cameraTrack.forEach((cameraShot) => {
-            animateShot(cameraShot);
+            animateShot(cameraShot, fileManager);
         });
         //TODO: Copy all of the frames into a single folder, and rename the frames appropriately
         //TODO: Generate video
@@ -36,16 +37,16 @@ exports.animateVideoTimeline = animateVideoTimeline;
  * @param timeInMS //How many ms to animate for
  * @param fileoutputDirectory //Folder to drop the final video file in
  */
-function animateShot(camerashot) {
+function animateShot(camerashot, animationFileManager) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("AnimateShot. 1");
-        const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/background.png"; //TODO: File manager
-        const shotFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/shots/0/";
-        const backgroundOut = shotFolder + "processedShot.png"; //TODO: File manager
-        const compositedOut = shotFolder + "processedShot_composited.png"; //TODO: File manager
-        const animatedOut = shotFolder + "animated_frames/";
+        const backgroundImage = animationFileManager.getShotBackgroundImage(camerashot);
+        const shotFolder = animationFileManager.getShotDirectory(camerashot);
+        const backgroundOut = shotFolder + "/processedShot.png"; //TODO: File manager
+        const compositedOut = shotFolder + "/processedShot_composited.png"; //TODO: File manager
+        const animatedOut = shotFolder + "/animated_frames/";
         yield generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut);
-        yield addStaticCharacterToFrame(camerashot, shotFolder + "processedShot_composited.png");
+        yield addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut);
         yield animateSpeakingCharacter(compositedOut, camerashot, animatedOut);
     });
 }
@@ -103,9 +104,8 @@ function addCharacterToFrame({ frameImage, characterImage, position, outputFile,
     });
 }
 //TODO: remove outputFile param and get it from fileManager
-function addStaticCharacterToFrame(cameraShot, outputFile) {
+function addStaticCharacterToFrame(frameImage, cameraShot, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
-        const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png";
         const characterInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false });
         const characterImage = getCharacterImageFolder(characterInfo) + "1.png";
         const characterPosition = getCharacterPosition(characterInfo);
@@ -187,14 +187,18 @@ class AnimationFileManager {
      * @param sceneNumber
      * @param shotNumber
      */
-    getShotDirectoryPath(sceneNumber, shotNumber) {
-        return this.getRootFilePath() + "shots/" + sceneNumber + "/" + shotNumber + "/";
+    getShotDirectory(cameraShot) {
+        const sceneNumber = cameraShot.sceneNumber;
+        const shotNumber = cameraShot.shotNumber;
+        const directoryPath = this.getRootFilePath() + "/scenes/" + sceneNumber + "/shots/" + shotNumber;
+        //TODO: Make directory path
+        return directoryPath;
     }
-    getShotImageFileLocation(cameraShot) {
-        return cameraShot.backgroundImagePath; //TODO: Return actual cut version of this
+    getShotBackgroundImage(cameraShot) {
+        return this.getRootFilePath() + "/scenes/" + cameraShot.sceneNumber + "/background.png";
     }
     getRootFilePath() {
-        return app_root_path_1.default + "/Assets/dynamic_assets/" + this.movieID + "/intermediateAnimations/";
+        return app_root_path_1.default + "/Assets/dynamic_assets/" + this.movieID;
     }
 }
 function _testAddCharToFrame() {
@@ -243,7 +247,7 @@ function _testGenerateStatic() {
         const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png";
         const shotType1 = videotimeline_1.ShotType.OTS_primaryActor;
         const shot1 = { shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: speakingActor, shotNumber: shotNumber, sceneNumber: sceneNumber };
-        yield addStaticCharacterToFrame(shot1, out1);
+        yield addStaticCharacterToFrame(backgroundImage, shot1, out1);
     });
 }
 function _testAnimateSpeakingCharacter() {
@@ -270,7 +274,8 @@ function _testAnimateShot() {
     return __awaiter(this, void 0, void 0, function* () {
         const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"; //TODO: Use filemanager
         const shot = _getTestShot(backgroundImage);
-        animateShot(shot);
+        const fileManager = new AnimationFileManager("testassets2");
+        animateShot(shot, fileManager);
     });
 }
 _testAnimateShot();

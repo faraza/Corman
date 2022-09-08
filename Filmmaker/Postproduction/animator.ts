@@ -9,10 +9,11 @@ const ANIMATION_FPS = 10
 
 
 export async function animateVideoTimeline(videoTimeline: VideoTimeline, assets: DynamicAssetManager){        
-    const fileManager = new AnimationFileManager(assets.movieID)
+    const fileManager = new AnimationFileManager(assets.movieID)    
+    //TODO: Gen folders for each shot and drop background image there
     
     videoTimeline.cameraTrack.forEach((cameraShot)=>{
-        animateShot(cameraShot)                        
+        animateShot(cameraShot, fileManager)                        
     })
 
     //TODO: Copy all of the frames into a single folder, and rename the frames appropriately
@@ -26,16 +27,16 @@ export async function animateVideoTimeline(videoTimeline: VideoTimeline, assets:
  * @param timeInMS //How many ms to animate for
  * @param fileoutputDirectory //Folder to drop the final video file in
  */
-async function animateShot(camerashot: CameraShot){
+async function animateShot(camerashot: CameraShot, animationFileManager: AnimationFileManager){
     console.log("AnimateShot. 1")
 
-    const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/background.png" //TODO: File manager
-    const shotFolder = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/shots/0/"
-    const backgroundOut = shotFolder + "processedShot.png" //TODO: File manager
-    const compositedOut = shotFolder + "processedShot_composited.png" //TODO: File manager
-    const animatedOut = shotFolder + "animated_frames/"
+    const backgroundImage = animationFileManager.getShotBackgroundImage(camerashot)
+    const shotFolder = animationFileManager.getShotDirectory(camerashot)
+    const backgroundOut = shotFolder + "/processedShot.png" //TODO: File manager
+    const compositedOut = shotFolder + "/processedShot_composited.png" //TODO: File manager
+    const animatedOut = shotFolder + "/animated_frames/"
     await generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut)
-    await addStaticCharacterToFrame(camerashot, shotFolder + "processedShot_composited.png")
+    await addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut)
     await animateSpeakingCharacter(compositedOut, camerashot, animatedOut)            
 }
 
@@ -93,9 +94,7 @@ async function addCharacterToFrame({ frameImage, characterImage, position, outpu
 }
 
 //TODO: remove outputFile param and get it from fileManager
-async function addStaticCharacterToFrame(cameraShot: CameraShot, outputFile: string){   
-    const frameImage = getCameraShotFolder(cameraShot) + "processedShot.png"        
-    
+async function addStaticCharacterToFrame(frameImage: string, cameraShot: CameraShot, outputFile: string){           
     const characterInfo: CharacterShotInfo = getCharacterShotInfo({ cameraShot, isSpeaker: false })
     const characterImage = getCharacterImageFolder(characterInfo) + "1.png"
     const characterPosition = getCharacterPosition(characterInfo)        
@@ -185,16 +184,20 @@ class AnimationFileManager{
      * @param sceneNumber 
      * @param shotNumber 
      */
-    public getShotDirectoryPath(sceneNumber: number, shotNumber: number): string{
-        return this.getRootFilePath() + "shots/" + sceneNumber + "/" + shotNumber + "/"
+    public getShotDirectory(cameraShot: CameraShot): string{
+        const sceneNumber = cameraShot.sceneNumber
+        const shotNumber = cameraShot.shotNumber
+        const directoryPath = this.getRootFilePath() + "/scenes/" + sceneNumber + "/shots/" + shotNumber
+        //TODO: Make directory path
+        return directoryPath        
     } 
 
-    public getShotImageFileLocation(cameraShot: CameraShot): string{        
-        return cameraShot.backgroundImagePath //TODO: Return actual cut version of this
+    public getShotBackgroundImage(cameraShot: CameraShot): string{        
+        return this.getRootFilePath() + "/scenes/" + cameraShot.sceneNumber + "/background.png"
     }
     
     private getRootFilePath(): string{
-        return appRoot + "/Assets/dynamic_assets/" + this.movieID + "/intermediateAnimations/"
+        return appRoot + "/Assets/dynamic_assets/" + this.movieID
     }
 
 }
@@ -264,7 +267,7 @@ async function _testGenerateStatic(){
     const out1 = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png"
     const shotType1 = ShotType.OTS_primaryActor
     const shot1: CameraShot = {shotType: shotType1, backgroundImagePath: backgroundImage, startTime: startTime, endTime: endTime, speakingActorID: speakingActor, shotNumber: shotNumber, sceneNumber: sceneNumber}
-    await addStaticCharacterToFrame(shot1, out1)
+    await addStaticCharacterToFrame(backgroundImage, shot1, out1)
 }
 
 async function _testAnimateSpeakingCharacter(){
@@ -294,7 +297,9 @@ function _getTestShot(backgroundImagePath: string): CameraShot{
 async function _testAnimateShot(){    
     const backgroundImage = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets1/scenes/0/shots/0/finalShot.png" //TODO: Use filemanager
     const shot = _getTestShot(backgroundImage)
-    animateShot(shot)    
+    const fileManager = new AnimationFileManager("testassets2")
+    
+    animateShot(shot, fileManager)    
 }
 
 

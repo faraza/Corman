@@ -162,7 +162,7 @@ function getCharacterPosition(characterInfo) {
         else
             return { distanceFromLeft: 330, distanceFromTop: 100 };
     }
-    else if (characterInfo.shotType === videotimeline_1.ShotType.closeup_primaryActor) { //TODO
+    else if (characterInfo.shotType === videotimeline_1.ShotType.closeup_primaryActor) {
         if (!characterInfo.isPrimary) {
             console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not primary. Character Info: ", characterInfo);
             return { distanceFromLeft: -1000, distanceFromTop: -1000 };
@@ -171,13 +171,13 @@ function getCharacterPosition(characterInfo) {
             return { distanceFromLeft: 0, distanceFromTop: 150 };
         }
     }
-    else if (characterInfo.shotType === videotimeline_1.ShotType.closeup_secondaryActor) { //TODO
+    else if (characterInfo.shotType === videotimeline_1.ShotType.closeup_secondaryActor) {
         if (characterInfo.isPrimary) {
             console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not secondary. Character Info: ", characterInfo);
             return { distanceFromLeft: -1000, distanceFromTop: -1000 };
         }
         else {
-            return { distanceFromLeft: 330, distanceFromTop: 100 };
+            return { distanceFromLeft: 40, distanceFromTop: 150 };
         }
     }
     console.log("ERROR -- Animator.ts::getCharacterPosition. Unknown shot type: ", characterInfo);
@@ -304,9 +304,9 @@ function _getTestShot(backgroundImagePath) {
     const endTime = 4000;
     const shotNumber = 0;
     const sceneNumber = 0;
-    const isPrimary = true;
+    const isPrimary = false;
     const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
-    const shotType = videotimeline_1.ShotType.closeup_primaryActor;
+    const shotType = videotimeline_1.ShotType.closeup_secondaryActor;
     const shot = { shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
     return shot;
 }

@@ -157,7 +157,7 @@ function getCharacterPosition(characterInfo: CharacterShotInfo): { distanceFromL
         else
             return {distanceFromLeft: 330, distanceFromTop: 100}
     }
-    else if(characterInfo.shotType === ShotType.closeup_primaryActor){ //TODO
+    else if(characterInfo.shotType === ShotType.closeup_primaryActor){
         if(!characterInfo.isPrimary){
             console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not primary. Character Info: ", characterInfo)
             return {distanceFromLeft: -1000, distanceFromTop: -1000}            
@@ -166,13 +166,13 @@ function getCharacterPosition(characterInfo: CharacterShotInfo): { distanceFromL
             return {distanceFromLeft: 0, distanceFromTop: 150}
         }            
     }
-    else if (characterInfo.shotType === ShotType.closeup_secondaryActor){ //TODO
+    else if (characterInfo.shotType === ShotType.closeup_secondaryActor){
         if(characterInfo.isPrimary){
             console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not secondary. Character Info: ", characterInfo)
             return {distanceFromLeft: -1000, distanceFromTop: -1000}            
         }            
         else{
-            return {distanceFromLeft: 330, distanceFromTop: 100}
+            return {distanceFromLeft: 40, distanceFromTop: 150}
         }
     }
 
@@ -326,10 +326,10 @@ function _getTestShot(backgroundImagePath: string): CameraShot{
     const endTime = 4000
     const shotNumber = 0
     const sceneNumber = 0
-    const isPrimary = true
+    const isPrimary = false
     const actorID = isPrimary ? getPrimaryActor() : getSecondaryActor()
 
-    const shotType = ShotType.closeup_primaryActor
+    const shotType = ShotType.closeup_secondaryActor
     const shot: CameraShot = {shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    
 
     return shot

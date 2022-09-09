@@ -153,9 +153,9 @@ function getCharacterPosition(characterInfo: CharacterShotInfo): { distanceFromL
     }    
     else if(characterInfo.shotType === ShotType.wideshot){ //TODO
         if(characterInfo.isPrimary)
-            return {distanceFromLeft: -20, distanceFromTop: 100}            
+            return {distanceFromLeft: 50, distanceFromTop: 240}            
         else
-            return {distanceFromLeft: 330, distanceFromTop: 100}
+            return {distanceFromLeft: 380, distanceFromTop: 220}
     }
     else if(characterInfo.shotType === ShotType.closeup_primaryActor){
         if(!characterInfo.isPrimary){
@@ -180,7 +180,7 @@ function getCharacterPosition(characterInfo: CharacterShotInfo): { distanceFromL
     return {distanceFromLeft: -1000, distanceFromTop: -1000}            
 }
 
-//TODO: Figure out params
+//TODO: Get params
 async function generateShotBackground(imageFile: string, shotType: ShotType, outputFile: string){     
     if(shotType === ShotType.wideshot){ //TODO: Do some stuff w/ cropping so it looks different from OTS. But it's fine for now
         await sharp(imageFile)
@@ -189,12 +189,12 @@ async function generateShotBackground(imageFile: string, shotType: ShotType, out
     }
     else if (shotType === ShotType.OTS_primaryActor){
         await sharp(imageFile)
-        .blur(3) //TODO: Get right param        
+        .blur(3)
         .toFile(outputFile)        
     }
     else if (shotType === ShotType.OTS_secondaryActor){
         await sharp(imageFile)
-        .blur(3) //TODO: Get right param
+        .blur(3)
         .flop()
         .toFile(outputFile)
     }
@@ -229,7 +229,7 @@ class AnimationFileManager{
         const sceneNumber = cameraShot.sceneNumber
         const shotNumber = cameraShot.shotNumber
         const directoryPath = this.getRootFilePath() + "/scenes/" + sceneNumber + "/shots/" + shotNumber
-        //TODO: Make directory path
+
         return directoryPath        
     } 
 
@@ -329,7 +329,7 @@ function _getTestShot(backgroundImagePath: string): CameraShot{
     const isPrimary = false
     const actorID = isPrimary ? getPrimaryActor() : getSecondaryActor()
 
-    const shotType = ShotType.closeup_secondaryActor
+    const shotType = ShotType.wideshot
     const shot: CameraShot = {shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    
 
     return shot

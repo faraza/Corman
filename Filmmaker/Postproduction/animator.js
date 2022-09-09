@@ -158,9 +158,9 @@ function getCharacterPosition(characterInfo) {
     }
     else if (characterInfo.shotType === videotimeline_1.ShotType.wideshot) { //TODO
         if (characterInfo.isPrimary)
-            return { distanceFromLeft: -20, distanceFromTop: 100 };
+            return { distanceFromLeft: 50, distanceFromTop: 240 };
         else
-            return { distanceFromLeft: 330, distanceFromTop: 100 };
+            return { distanceFromLeft: 380, distanceFromTop: 220 };
     }
     else if (characterInfo.shotType === videotimeline_1.ShotType.closeup_primaryActor) {
         if (!characterInfo.isPrimary) {
@@ -183,7 +183,7 @@ function getCharacterPosition(characterInfo) {
     console.log("ERROR -- Animator.ts::getCharacterPosition. Unknown shot type: ", characterInfo);
     return { distanceFromLeft: -1000, distanceFromTop: -1000 };
 }
-//TODO: Figure out params
+//TODO: Get params
 function generateShotBackground(imageFile, shotType, outputFile) {
     return __awaiter(this, void 0, void 0, function* () {
         if (shotType === videotimeline_1.ShotType.wideshot) { //TODO: Do some stuff w/ cropping so it looks different from OTS. But it's fine for now
@@ -193,12 +193,12 @@ function generateShotBackground(imageFile, shotType, outputFile) {
         }
         else if (shotType === videotimeline_1.ShotType.OTS_primaryActor) {
             yield (0, sharp_1.default)(imageFile)
-                .blur(3) //TODO: Get right param        
+                .blur(3)
                 .toFile(outputFile);
         }
         else if (shotType === videotimeline_1.ShotType.OTS_secondaryActor) {
             yield (0, sharp_1.default)(imageFile)
-                .blur(3) //TODO: Get right param
+                .blur(3)
                 .flop()
                 .toFile(outputFile);
         }
@@ -231,7 +231,6 @@ class AnimationFileManager {
         const sceneNumber = cameraShot.sceneNumber;
         const shotNumber = cameraShot.shotNumber;
         const directoryPath = this.getRootFilePath() + "/scenes/" + sceneNumber + "/shots/" + shotNumber;
-        //TODO: Make directory path
         return directoryPath;
     }
     getShotBackgroundImage(cameraShot) {
@@ -306,7 +305,7 @@ function _getTestShot(backgroundImagePath) {
     const sceneNumber = 0;
     const isPrimary = false;
     const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
-    const shotType = videotimeline_1.ShotType.closeup_secondaryActor;
+    const shotType = videotimeline_1.ShotType.wideshot;
     const shot = { shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
     return shot;
 }

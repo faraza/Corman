@@ -1,7 +1,9 @@
 import { RawDialogue, RecordedDialogue } from "../CommonClasses/dialogue"
 import { ActorID } from "../CommonClasses/actor"
 
-import {ttsAPIKey} from '../../secrets'
+import {azureTTSKey, azureTTSRegion} from '../../secrets'
+import * as azureTTS from 'microsoft-cognitiveservices-speech-sdk'
+import * as fs from 'fs'
 
 export async function generateTTS(dialogue: RawDialogue, fileOutputLocation: string): Promise<RecordedDialogue>{
     
@@ -24,4 +26,27 @@ function getTTSParamsFromActorID(actorID: ActorID){
     //TODO
 }
 
-console.log("VO Artist. TTS key : ", ttsAPIKey)
+async function _testHardcodedTTS(textToSpeak: string){
+    const ttsConfig = azureTTS.SpeechConfig.fromSubscription(azureTTSKey, azureTTSRegion)
+    ttsConfig.speechSynthesisOutputFormat = 5; // mp3
+    const outfile = "/Users/farazabidi/Documents/Corman/Assets/dynamic_assets/testassets2/scenes/0/audio/tts1.mp3"
+    const audioConfig = azureTTS.AudioConfig.fromAudioFileOutput(outfile)
+
+    const synthesizer = new azureTTS.SpeechSynthesizer(ttsConfig, audioConfig)
+
+    return new Promise((res, rej)=>{
+        synthesizer.speakTextAsync(textToSpeak, (result)=>{
+            const audioFile = fs.createReadStream(outfile)
+            res(audioFile)
+        },
+        error=>{
+            synthesizer.close()
+            rej(error)
+        })
+    })    
+}
+
+console.log("VO Artist. TTS key : ", azureTTSKey)
+_testHardcodedTTS("Microphone check one two what is this. The five foot assassin with the ruff neck business.").finally(()=>{
+    console.log("Done running VO")
+})

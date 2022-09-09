@@ -1,6 +1,8 @@
 import { RawDialogue, RecordedDialogue } from "../CommonClasses/dialogue"
 import { ActorID } from "../CommonClasses/actor"
 
+import {ttsAPIKey} from '../../secrets'
+
 export async function generateTTS(dialogue: RawDialogue, fileOutputLocation: string): Promise<RecordedDialogue>{
     
     await _getDummyTTSFromServer()          
@@ -21,3 +23,5 @@ function _getDummyTTSFromServer(): Promise<void>{
 function getTTSParamsFromActorID(actorID: ActorID){ 
     //TODO
 }
+
+console.log("VO Artist. TTS key : ", ttsAPIKey)

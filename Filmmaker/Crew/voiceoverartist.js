@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateTTS = void 0;
+const secrets_1 = require("../../secrets");
 function generateTTS(dialogue, fileOutputLocation) {
     return __awaiter(this, void 0, void 0, function* () {
         yield _getDummyTTSFromServer();
@@ -29,3 +30,4 @@ function _getDummyTTSFromServer() {
 function getTTSParamsFromActorID(actorID) {
     //TODO
 }
+console.log("VO Artist. TTS key : ", secrets_1.ttsAPIKey);

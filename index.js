@@ -1,9 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const ImageAndAnimation_1 = require("./ImageAndAnimation");
-const hello = "hello";
-const addWorldToString = (input) => {
-    return (input + " world!");
-};
-console.log(addWorldToString(hello));
-(0, ImageAndAnimation_1.testCharacterMouthAnimation)();
+// @ts-ignore //TODO: This is bad. Just for testing
+const filmmaker = require('./Filmmaker');
+//TODO: Setup server and routing. Make calls based on that
+filmmaker.makeMovieFromPrompt("A king who wants to go the stars 11.");

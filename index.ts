@@ -1,10 +1,7 @@
-import { testBasicImageGen, testCharacterMouthAnimation } from "./ImageAndAnimation"
+// @ts-ignore //TODO: This is bad. Just for testing
+const filmmaker = require('./Filmmaker')
 
-const hello = "hello"
 
-const addWorldToString = (input: string): string=>{
-    return (input + " world!")
-}
+//TODO: Setup server and routing. Make calls based on that
 
-console.log(addWorldToString(hello))
-testCharacterMouthAnimation()
+filmmaker.makeMovieFromPrompt("A king who wants to go the stars 11.")

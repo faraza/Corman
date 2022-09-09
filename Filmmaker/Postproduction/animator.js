@@ -139,6 +139,19 @@ function convertShotTypeToFolderName(shotType) {
 }
 //TODO: Figure out param
 function getCharacterPosition(characterInfo) {
+    if (characterInfo.shotType === videotimeline_1.ShotType.OTS_primaryActor) {
+        if (characterInfo.isPrimary)
+            return { distanceFromLeft: 310, distanceFromTop: 170 };
+        else
+            return { distanceFromLeft: 20, distanceFromTop: 100 };
+    }
+    else if (characterInfo.shotType === videotimeline_1.ShotType.OTS_secondaryActor) {
+        if (characterInfo.isPrimary)
+            return { distanceFromLeft: -20, distanceFromTop: 100 };
+        else
+            return { distanceFromLeft: 330, distanceFromTop: 100 };
+    }
+    //TODO
     //TODO: Factor in Shot type
     if (characterInfo.isPrimary)
         return { distanceFromLeft: 310, distanceFromTop: 200 };

@@ -132,7 +132,21 @@ function convertShotTypeToFolderName(shotType: ShotType): string{
 }
 
 //TODO: Figure out param
-function getCharacterPosition(characterInfo: CharacterShotInfo) {
+function getCharacterPosition(characterInfo: CharacterShotInfo): { distanceFromLeft: number; distanceFromTop: number; } {
+    if(characterInfo.shotType === ShotType.OTS_primaryActor){
+        if(characterInfo.isPrimary)
+            return {distanceFromLeft: 310, distanceFromTop: 170}
+        else
+            return {distanceFromLeft: 20, distanceFromTop: 100}
+    }
+    else if(characterInfo.shotType === ShotType.OTS_secondaryActor){
+        if(characterInfo.isPrimary)
+            return {distanceFromLeft: -20, distanceFromTop: 100}            
+        else
+            return {distanceFromLeft: 330, distanceFromTop: 100}
+    }
+    //TODO
+
     //TODO: Factor in Shot type
     if(characterInfo.isPrimary)
         return {distanceFromLeft: 310, distanceFromTop: 200}

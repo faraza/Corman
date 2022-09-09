@@ -43,8 +43,13 @@ function animateShot(camerashot, animationFileManager) {
         const animatedOut = shotFolder + "/animated_frames/";
         yield fs_extra_1.default.ensureDir(animatedOut);
         yield generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut);
-        yield addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut);
-        yield animateSpeakingCharacter(compositedOut, camerashot, animatedOut);
+        if ((0, videotimeline_1.isTwoShot)(camerashot.shotType)) {
+            yield addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut);
+            yield animateSpeakingCharacter(compositedOut, camerashot, animatedOut);
+        }
+        else {
+            yield animateSpeakingCharacter(backgroundOut, camerashot, animatedOut);
+        }
     });
 }
 /**
@@ -151,12 +156,32 @@ function getCharacterPosition(characterInfo) {
         else
             return { distanceFromLeft: 330, distanceFromTop: 100 };
     }
-    //TODO
-    //TODO: Factor in Shot type
-    if (characterInfo.isPrimary)
-        return { distanceFromLeft: 310, distanceFromTop: 200 };
-    else
-        return { distanceFromLeft: 20, distanceFromTop: 100 };
+    else if (characterInfo.shotType === videotimeline_1.ShotType.wideshot) { //TODO
+        if (characterInfo.isPrimary)
+            return { distanceFromLeft: -20, distanceFromTop: 100 };
+        else
+            return { distanceFromLeft: 330, distanceFromTop: 100 };
+    }
+    else if (characterInfo.shotType === videotimeline_1.ShotType.closeup_primaryActor) { //TODO
+        if (!characterInfo.isPrimary) {
+            console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not primary. Character Info: ", characterInfo);
+            return { distanceFromLeft: -1000, distanceFromTop: -1000 };
+        }
+        else {
+            return { distanceFromLeft: 0, distanceFromTop: 150 };
+        }
+    }
+    else if (characterInfo.shotType === videotimeline_1.ShotType.closeup_secondaryActor) { //TODO
+        if (characterInfo.isPrimary) {
+            console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not secondary. Character Info: ", characterInfo);
+            return { distanceFromLeft: -1000, distanceFromTop: -1000 };
+        }
+        else {
+            return { distanceFromLeft: 330, distanceFromTop: 100 };
+        }
+    }
+    console.log("ERROR -- Animator.ts::getCharacterPosition. Unknown shot type: ", characterInfo);
+    return { distanceFromLeft: -1000, distanceFromTop: -1000 };
 }
 //TODO: Figure out params
 function generateShotBackground(imageFile, shotType, outputFile) {
@@ -279,9 +304,9 @@ function _getTestShot(backgroundImagePath) {
     const endTime = 4000;
     const shotNumber = 0;
     const sceneNumber = 0;
-    const isPrimary = false;
+    const isPrimary = true;
     const actorID = isPrimary ? (0, actor_1.getPrimaryActor)() : (0, actor_1.getSecondaryActor)();
-    const shotType = videotimeline_1.ShotType.OTS_secondaryActor;
+    const shotType = videotimeline_1.ShotType.closeup_primaryActor;
     const shot = { shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber };
     return shot;
 }

@@ -44,6 +44,14 @@ export enum ShotType{
     closeup_secondaryActor = 4    
 }
 
+export function isTwoShot(shot: ShotType): boolean{
+    if(shot === ShotType.wideshot) return true
+    if(shot === ShotType.OTS_primaryActor) return true
+    if(shot === ShotType.OTS_secondaryActor) return true
+
+    return false
+}
+
 /**
  * This describes a shot where the camera doesn't move.
  * There will still be motion from the character being animated. So it's not just a single frame

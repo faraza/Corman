@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShotType = exports.VideoTimeline = exports.createVideoTimeline = void 0;
+exports.isTwoShot = exports.ShotType = exports.VideoTimeline = exports.createVideoTimeline = void 0;
 const dialogue_1 = require("../CommonClasses/dialogue");
 function createVideoTimeline(assets, audioTimeline) {
     const videoTimeline = new VideoTimeline();
@@ -39,6 +39,16 @@ var ShotType;
     ShotType[ShotType["OTS_secondaryActor"] = 3] = "OTS_secondaryActor";
     ShotType[ShotType["closeup_secondaryActor"] = 4] = "closeup_secondaryActor";
 })(ShotType = exports.ShotType || (exports.ShotType = {}));
+function isTwoShot(shot) {
+    if (shot === ShotType.wideshot)
+        return true;
+    if (shot === ShotType.OTS_primaryActor)
+        return true;
+    if (shot === ShotType.OTS_secondaryActor)
+        return true;
+    return false;
+}
+exports.isTwoShot = isTwoShot;
 function pickShot() {
     return Math.random() * 4; //TODO: Set shot based on heuristics
 }

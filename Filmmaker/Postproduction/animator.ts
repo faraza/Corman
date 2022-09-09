@@ -1,7 +1,7 @@
 import sharp from 'sharp'
 import fse from 'fs-extra'
 import appRoot from 'app-root-path';
-import { CameraShot, VideoTimeline, ShotType } from './videotimeline';
+import { CameraShot, VideoTimeline, ShotType, isTwoShot } from './videotimeline';
 import { DynamicAssetManager } from '../Crew/dynamicassetgenerator';
 import { ActorID, ActorEmotion, getPrimaryActor, getSecondaryActor} from '../CommonClasses/actor';
 
@@ -28,11 +28,17 @@ async function animateShot(camerashot: CameraShot, animationFileManager: Animati
     const shotFolder = animationFileManager.getShotDirectory(camerashot)
     const backgroundOut = shotFolder + "/processedShot.png"
     const compositedOut = shotFolder + "/processedShot_composited.png"
+    
     const animatedOut = shotFolder + "/animated_frames/"
     await fse.ensureDir(animatedOut)
     await generateShotBackground(backgroundImage, camerashot.shotType, backgroundOut)
-    await addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut)
-    await animateSpeakingCharacter(compositedOut, camerashot, animatedOut)            
+    if(isTwoShot(camerashot.shotType)){
+        await addStaticCharacterToFrame(backgroundOut, camerashot, compositedOut)
+        await animateSpeakingCharacter(compositedOut, camerashot, animatedOut)            
+    }
+    else{
+        await animateSpeakingCharacter(backgroundOut, camerashot, animatedOut)
+    }
 }
 
 /**
@@ -144,14 +150,34 @@ function getCharacterPosition(characterInfo: CharacterShotInfo): { distanceFromL
             return {distanceFromLeft: -20, distanceFromTop: 100}            
         else
             return {distanceFromLeft: 330, distanceFromTop: 100}
+    }    
+    else if(characterInfo.shotType === ShotType.wideshot){ //TODO
+        if(characterInfo.isPrimary)
+            return {distanceFromLeft: -20, distanceFromTop: 100}            
+        else
+            return {distanceFromLeft: 330, distanceFromTop: 100}
     }
-    //TODO
+    else if(characterInfo.shotType === ShotType.closeup_primaryActor){ //TODO
+        if(!characterInfo.isPrimary){
+            console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not primary. Character Info: ", characterInfo)
+            return {distanceFromLeft: -1000, distanceFromTop: -1000}            
+        }            
+        else{
+            return {distanceFromLeft: 0, distanceFromTop: 150}
+        }            
+    }
+    else if (characterInfo.shotType === ShotType.closeup_secondaryActor){ //TODO
+        if(characterInfo.isPrimary){
+            console.log("ERROR -- Animator.ts::getCharacterPosition. Character is not secondary. Character Info: ", characterInfo)
+            return {distanceFromLeft: -1000, distanceFromTop: -1000}            
+        }            
+        else{
+            return {distanceFromLeft: 330, distanceFromTop: 100}
+        }
+    }
 
-    //TODO: Factor in Shot type
-    if(characterInfo.isPrimary)
-        return {distanceFromLeft: 310, distanceFromTop: 200}
-    else
-        return {distanceFromLeft: 20, distanceFromTop: 100}
+    console.log("ERROR -- Animator.ts::getCharacterPosition. Unknown shot type: ", characterInfo)
+    return {distanceFromLeft: -1000, distanceFromTop: -1000}            
 }
 
 //TODO: Figure out params
@@ -300,10 +326,10 @@ function _getTestShot(backgroundImagePath: string): CameraShot{
     const endTime = 4000
     const shotNumber = 0
     const sceneNumber = 0
-    const isPrimary = false
+    const isPrimary = true
     const actorID = isPrimary ? getPrimaryActor() : getSecondaryActor()
 
-    const shotType = ShotType.OTS_secondaryActor
+    const shotType = ShotType.closeup_primaryActor
     const shot: CameraShot = {shotType: shotType, backgroundImagePath: backgroundImagePath, startTime: startTime, endTime: endTime, speakingActorID: actorID, shotNumber: shotNumber, sceneNumber: sceneNumber}    
 
     return shot

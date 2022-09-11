@@ -39,7 +39,7 @@ function _testGenScriptHardcoded() {
         console.log("_testGenScript 1");
         const config = new openai_1.Configuration({ apiKey: secrets_1.gpt3Key });
         const openai = new openai_1.OpenAIApi(config);
-        const prompt = "What are three animals that can swim?";
+        const prompt = hardcodedShortFilmPrompt;
         const response = yield sendPromptToServer(openai, prompt);
         console.log("Response: ", response);
     });
@@ -49,7 +49,8 @@ function sendPromptToServer(openai, prompt) {
     return __awaiter(this, void 0, void 0, function* () {
         const completion = yield openai.createCompletion({
             model: "text-davinci-002",
-            prompt: prompt
+            prompt: prompt,
+            max_tokens: 400
         });
         console.log(completion.data);
         if (!completion.data.choices) {
@@ -59,4 +60,17 @@ function sendPromptToServer(openai, prompt) {
         return (_a = response === null || response === void 0 ? void 0 : response.trim()) !== null && _a !== void 0 ? _a : "";
     });
 }
+const hardcodedShortFilmPrompt = `Write a short film about a King who wants to travel to the stars in 5 scenes. Give a location, a description, and dialogue
+
+Scene 1
+-Location: King's Chambers
+-Description: The King is in his chambers, looking at the stars. He longs to be up there, among them. He has heard tales of other worlds and wonders what it would be like to visit them.
+-Dialogue:
+King: I want to go to the stars.
+Advisor: But your majesty. That is impossible with today's technology.
+King: Then we must find a way. I will not be content to stay here on this world my whole life. There must be something out there for me.
+
+Scene 2
+-Location: Public Square
+-Description: The King is talking to his subjects, telling them of his plans to travel to the stars. Some believe him, others think he is crazy.`;
 _testGenScriptHardcoded();

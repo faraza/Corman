@@ -29,7 +29,7 @@ async function _testGenScriptHardcoded(){
     const config = new Configuration({apiKey: gpt3Key})
     const openai = new OpenAIApi(config);
     
-    const prompt = "What are three animals that can swim?"
+    const prompt = hardcodedShortFilmPrompt
     const response = await sendPromptToServer(openai, prompt)
     console.log("Response: ", response)
 }
@@ -37,7 +37,8 @@ async function _testGenScriptHardcoded(){
 async function sendPromptToServer(openai: OpenAIApi, prompt: string): Promise<string>{
     const completion = await openai.createCompletion({
         model: "text-davinci-002",
-        prompt: prompt        
+        prompt: prompt,
+        max_tokens: 400           
     })
 
     console.log(completion.data)
@@ -47,5 +48,20 @@ async function sendPromptToServer(openai: OpenAIApi, prompt: string): Promise<st
     const response = completion.data.choices[0].text
     return response?.trim() ?? ""
 }
+
+const hardcodedShortFilmPrompt = `Write a short film about a King who wants to travel to the stars in 5 scenes. Give a location, a description, and dialogue
+
+Scene 1
+-Location: King's Chambers
+-Description: The King is in his chambers, looking at the stars. He longs to be up there, among them. He has heard tales of other worlds and wonders what it would be like to visit them.
+-Dialogue:
+King: I want to go to the stars.
+Advisor: But your majesty. That is impossible with today's technology.
+King: Then we must find a way. I will not be content to stay here on this world my whole life. There must be something out there for me.
+
+Scene 2
+-Location: Public Square
+-Description: The King is talking to his subjects, telling them of his plans to travel to the stars. Some believe him, others think he is crazy.`
+
 
 _testGenScriptHardcoded()

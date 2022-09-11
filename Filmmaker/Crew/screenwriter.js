@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateScript = void 0;
+const openai_1 = require("openai");
+const secrets_1 = require("../../secrets");
 function generateScript(prompt, filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         const script = yield _getDummyScriptFromServer(prompt); //TODO: Actually call server
@@ -32,3 +34,22 @@ function _getDummyScriptFromServer(prompt) {
         }, 3000);
     });
 }
+function _testGenScriptHardcoded() {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("_testGenScript 1");
+        const config = new openai_1.Configuration({ apiKey: secrets_1.gpt3Key });
+        const openai = new openai_1.OpenAIApi(config);
+        const prompt = "What are three animals that can swim?";
+        sendPromptToServer(openai, prompt);
+    });
+}
+function sendPromptToServer(openai, prompt) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const completion = yield openai.createCompletion({
+            model: "text-davinci-002",
+            prompt: prompt
+        });
+        console.log(completion.data);
+    });
+}
+_testGenScriptHardcoded();

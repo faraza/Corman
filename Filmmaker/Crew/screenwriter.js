@@ -14,7 +14,9 @@ const openai_1 = require("openai");
 const secrets_1 = require("../../secrets");
 function generateScript(prompt, filePath) {
     return __awaiter(this, void 0, void 0, function* () {
-        const script = yield _getDummyScriptFromServer(prompt); //TODO: Actually call server
+        const config = new openai_1.Configuration({ apiKey: secrets_1.gpt3Key });
+        const openai = new openai_1.OpenAIApi(config);
+        const script = yield sendPromptToServer(openai, prompt);
         yield writeScriptToDisk(prompt, filePath);
         return script;
     });
@@ -36,11 +38,7 @@ function _getDummyScriptFromServer(prompt) {
 }
 function _testGenScriptHardcoded() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("_testGenScript 1");
-        const config = new openai_1.Configuration({ apiKey: secrets_1.gpt3Key });
-        const openai = new openai_1.OpenAIApi(config);
-        const prompt = hardcodedShortFilmPrompt;
-        const response = yield sendPromptToServer(openai, prompt);
+        const response = yield generateScript(hardcodedShortFilmPrompt, "fakeFilePath");
         console.log("Response: ", response);
     });
 }

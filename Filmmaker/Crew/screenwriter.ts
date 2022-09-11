@@ -3,7 +3,10 @@ import { gpt3Key } from "../../secrets";
 
 
 export async function generateScript(prompt: string, filePath: string): Promise<string>{    
-    const script = await _getDummyScriptFromServer(prompt) //TODO: Actually call server
+    const config = new Configuration({apiKey: gpt3Key})
+    const openai = new OpenAIApi(config);
+
+    const script = await sendPromptToServer(openai, prompt)
     await writeScriptToDisk(prompt, filePath)
     return script        
 }
@@ -25,12 +28,7 @@ function _getDummyScriptFromServer(prompt: string): Promise<string>{
 }
 
 async function _testGenScriptHardcoded(){
-    console.log("_testGenScript 1")
-    const config = new Configuration({apiKey: gpt3Key})
-    const openai = new OpenAIApi(config);
-    
-    const prompt = hardcodedShortFilmPrompt
-    const response = await sendPromptToServer(openai, prompt)
+    const response = await generateScript(hardcodedShortFilmPrompt, "fakeFilePath")    
     console.log("Response: ", response)
 }
 
@@ -63,5 +61,5 @@ Scene 2
 -Location: Public Square
 -Description: The King is talking to his subjects, telling them of his plans to travel to the stars. Some believe him, others think he is crazy.`
 
-
+ 
 _testGenScriptHardcoded()

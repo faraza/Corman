@@ -30,16 +30,22 @@ async function _testGenScriptHardcoded(){
     const openai = new OpenAIApi(config);
     
     const prompt = "What are three animals that can swim?"
-    sendPromptToServer(openai, prompt)
+    const response = await sendPromptToServer(openai, prompt)
+    console.log("Response: ", response)
 }
 
-async function sendPromptToServer(openai: OpenAIApi, prompt: string){
+async function sendPromptToServer(openai: OpenAIApi, prompt: string): Promise<string>{
     const completion = await openai.createCompletion({
         model: "text-davinci-002",
         prompt: prompt        
     })
 
     console.log(completion.data)
+    if(!completion.data.choices){
+        throw("No choices returned")
+    }
+    const response = completion.data.choices[0].text
+    return response?.trim() ?? ""
 }
 
 _testGenScriptHardcoded()

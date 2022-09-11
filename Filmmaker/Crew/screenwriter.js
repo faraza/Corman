@@ -40,16 +40,23 @@ function _testGenScriptHardcoded() {
         const config = new openai_1.Configuration({ apiKey: secrets_1.gpt3Key });
         const openai = new openai_1.OpenAIApi(config);
         const prompt = "What are three animals that can swim?";
-        sendPromptToServer(openai, prompt);
+        const response = yield sendPromptToServer(openai, prompt);
+        console.log("Response: ", response);
     });
 }
 function sendPromptToServer(openai, prompt) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const completion = yield openai.createCompletion({
             model: "text-davinci-002",
             prompt: prompt
         });
         console.log(completion.data);
+        if (!completion.data.choices) {
+            throw ("No choices returned");
+        }
+        const response = completion.data.choices[0].text;
+        return (_a = response === null || response === void 0 ? void 0 : response.trim()) !== null && _a !== void 0 ? _a : "";
     });
 }
 _testGenScriptHardcoded();

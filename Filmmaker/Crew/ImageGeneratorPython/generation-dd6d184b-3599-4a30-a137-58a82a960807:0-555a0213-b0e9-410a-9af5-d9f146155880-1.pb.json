@@ -5,67 +5,67 @@
       "concepts": [
         {
           "concept": "sexual",
-          "threshold": 0.11291504
+          "threshold": 0.117004395
         },
         {
           "concept": "nude",
-          "threshold": 0.12261963
+          "threshold": 0.12609863
         },
         {
           "concept": "sex",
-          "threshold": 0.14379883
+          "threshold": 0.15014648
         },
         {
           "concept": "18+",
-          "threshold": 0.16662598
+          "threshold": 0.16748047
         },
         {
           "concept": "naked",
-          "threshold": 0.1149292
+          "threshold": 0.124816895
         },
         {
           "concept": "nsfw",
-          "threshold": 0.13464355
+          "threshold": 0.14978027
         },
         {
           "concept": "porn",
-          "threshold": 0.14025879
+          "threshold": 0.12963867
         },
         {
           "concept": "dick",
-          "threshold": 0.13256836
+          "threshold": 0.13098145
         },
         {
           "concept": "vagina",
-          "threshold": 0.1430664
+          "threshold": 0.14587402
         },
         {
           "concept": "explicit content",
-          "threshold": 0.10809326
+          "threshold": 0.13659668
         },
         {
           "concept": "uncensored",
-          "threshold": 0.10015869
+          "threshold": 0.13378906
         },
         {
           "concept": "fuck",
-          "threshold": 0.11352539
+          "threshold": 0.15808105
         },
         {
           "concept": "nipples",
-          "threshold": 0.103027344
+          "threshold": 0.14697266
         },
         {
           "concept": "visible nipples",
-          "threshold": 0.09954834
+          "threshold": 0.13684082
         },
         {
           "concept": "naked breasts",
-          "threshold": 0.107299805
+          "threshold": 0.1217041
         },
         {
           "concept": "areola",
-          "threshold": 0.13110352
+          "threshold": 0.16345215
         }
       ]
     }

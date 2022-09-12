@@ -23,3 +23,10 @@ function _getDummyImageFromServer(prompt, fileOutputLocation) {
         }, 3000);
     });
 }
+function _testGenerateImage() {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("TestGenerateImage");
+        //TODO: Run python script
+    });
+}
+_testGenerateImage();

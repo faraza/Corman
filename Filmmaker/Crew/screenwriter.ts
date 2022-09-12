@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import { gpt3Key } from "../../secrets";
+import { hardcodedPromptExample } from "./promptstuffer";
 
 
 export async function generateScript(prompt: string, filePath: string): Promise<string>{    
@@ -35,8 +36,14 @@ async function _testGenScriptHardcoded(){
 async function sendPromptToServer(openai: OpenAIApi, prompt: string): Promise<string>{
     const completion = await openai.createCompletion({
         model: "text-davinci-002",
+        // model: "davinci:ft-personal-2022-09-12-00-42-06",
         prompt: prompt,
-        max_tokens: 400           
+        max_tokens: 1000,
+        frequency_penalty: 0,
+        temperature: 0.7,
+        top_p: 1.0,
+        presence_penalty: 1.2,
+        stop: ["END", "##"]    
     })
 
     console.log(completion.data)
@@ -47,19 +54,6 @@ async function sendPromptToServer(openai: OpenAIApi, prompt: string): Promise<st
     return response?.trim() ?? ""
 }
 
-const hardcodedShortFilmPrompt = `Write a short film about a King who wants to travel to the stars in 5 scenes. Give a location, a description, and dialogue
-
-Scene 1
--Location: King's Chambers
--Description: The King is in his chambers, looking at the stars. He longs to be up there, among them. He has heard tales of other worlds and wonders what it would be like to visit them.
--Dialogue:
-King: I want to go to the stars.
-Advisor: But your majesty. That is impossible with today's technology.
-King: Then we must find a way. I will not be content to stay here on this world my whole life. There must be something out there for me.
-
-Scene 2
--Location: Public Square
--Description: The King is talking to his subjects, telling them of his plans to travel to the stars. Some believe him, others think he is crazy.`
-
- 
+// const hardcodedShortFilmPrompt = `Write a short film in 5 scenes titled "Sarah and Jennifer become Tennis Stars". Give a location, a description, and dialogue.`
+const hardcodedShortFilmPrompt = hardcodedPromptExample
 _testGenScriptHardcoded()

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateScript = void 0;
 const openai_1 = require("openai");
 const secrets_1 = require("../../secrets");
+const promptstuffer_1 = require("./promptstuffer");
 function generateScript(prompt, filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         const config = new openai_1.Configuration({ apiKey: secrets_1.gpt3Key });
@@ -47,8 +48,14 @@ function sendPromptToServer(openai, prompt) {
     return __awaiter(this, void 0, void 0, function* () {
         const completion = yield openai.createCompletion({
             model: "text-davinci-002",
+            // model: "davinci:ft-personal-2022-09-12-00-42-06",
             prompt: prompt,
-            max_tokens: 400
+            max_tokens: 1000,
+            frequency_penalty: 0,
+            temperature: 0.7,
+            top_p: 1.0,
+            presence_penalty: 1.2,
+            stop: ["END", "##"]
         });
         console.log(completion.data);
         if (!completion.data.choices) {
@@ -58,17 +65,6 @@ function sendPromptToServer(openai, prompt) {
         return (_a = response === null || response === void 0 ? void 0 : response.trim()) !== null && _a !== void 0 ? _a : "";
     });
 }
-const hardcodedShortFilmPrompt = `Write a short film about a King who wants to travel to the stars in 5 scenes. Give a location, a description, and dialogue
-
-Scene 1
--Location: King's Chambers
--Description: The King is in his chambers, looking at the stars. He longs to be up there, among them. He has heard tales of other worlds and wonders what it would be like to visit them.
--Dialogue:
-King: I want to go to the stars.
-Advisor: But your majesty. That is impossible with today's technology.
-King: Then we must find a way. I will not be content to stay here on this world my whole life. There must be something out there for me.
-
-Scene 2
--Location: Public Square
--Description: The King is talking to his subjects, telling them of his plans to travel to the stars. Some believe him, others think he is crazy.`;
+// const hardcodedShortFilmPrompt = `Write a short film in 5 scenes titled "Sarah and Jennifer become Tennis Stars". Give a location, a description, and dialogue.`
+const hardcodedShortFilmPrompt = promptstuffer_1.hardcodedPromptExample;
 _testGenScriptHardcoded();

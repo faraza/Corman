@@ -1,11 +1,13 @@
 import { Configuration, OpenAIApi } from "openai";
 import { gpt3Key } from "../../secrets";
-import { hardcodedPromptExample } from "./promptstuffer";
+import { hardcodedPromptCloser, hardcodedPromptOpener } from "./promptstuffer";
 
 
-export async function generateScript(prompt: string, filePath: string): Promise<string>{    
+export async function generateScript(scriptTitle: string, filePath: string): Promise<string>{    
     const config = new Configuration({apiKey: gpt3Key})
     const openai = new OpenAIApi(config);
+
+    const prompt = hardcodedPromptOpener + scriptTitle + hardcodedPromptCloser
 
     const script = await sendPromptToServer(openai, prompt)
     await writeScriptToDisk(prompt, filePath)
@@ -28,12 +30,14 @@ function _getDummyScriptFromServer(prompt: string): Promise<string>{
     })
 }
 
-async function _testGenScriptHardcoded(){
-    const response = await generateScript(hardcodedShortFilmPrompt, "fakeFilePath")    
+async function _testGenScript(){
+    const filmTitle = "Invent time travel"
+    const response = await generateScript(filmTitle, "fakeFilePath")    
     console.log("Response: ", response)
 }
 
 async function sendPromptToServer(openai: OpenAIApi, prompt: string): Promise<string>{
+    console.log("Send prompt to server: ", prompt)
     const completion = await openai.createCompletion({
         model: "text-davinci-002",
         // model: "davinci:ft-personal-2022-09-12-00-42-06",
@@ -54,6 +58,5 @@ async function sendPromptToServer(openai: OpenAIApi, prompt: string): Promise<st
     return response?.trim() ?? ""
 }
 
-// const hardcodedShortFilmPrompt = `Write a short film in 5 scenes titled "Sarah and Jennifer become Tennis Stars". Give a location, a description, and dialogue.`
-const hardcodedShortFilmPrompt = hardcodedPromptExample
-_testGenScriptHardcoded()
+
+_testGenScript()

@@ -13,10 +13,11 @@ exports.generateScript = void 0;
 const openai_1 = require("openai");
 const secrets_1 = require("../../secrets");
 const promptstuffer_1 = require("./promptstuffer");
-function generateScript(prompt, filePath) {
+function generateScript(scriptTitle, filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         const config = new openai_1.Configuration({ apiKey: secrets_1.gpt3Key });
         const openai = new openai_1.OpenAIApi(config);
+        const prompt = promptstuffer_1.hardcodedPromptOpener + scriptTitle + promptstuffer_1.hardcodedPromptCloser;
         const script = yield sendPromptToServer(openai, prompt);
         yield writeScriptToDisk(prompt, filePath);
         return script;
@@ -37,15 +38,17 @@ function _getDummyScriptFromServer(prompt) {
         }, 3000);
     });
 }
-function _testGenScriptHardcoded() {
+function _testGenScript() {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield generateScript(hardcodedShortFilmPrompt, "fakeFilePath");
+        const filmTitle = "Invent time travel";
+        const response = yield generateScript(filmTitle, "fakeFilePath");
         console.log("Response: ", response);
     });
 }
 function sendPromptToServer(openai, prompt) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("Send prompt to server: ", prompt);
         const completion = yield openai.createCompletion({
             model: "text-davinci-002",
             // model: "davinci:ft-personal-2022-09-12-00-42-06",
@@ -65,6 +68,4 @@ function sendPromptToServer(openai, prompt) {
         return (_a = response === null || response === void 0 ? void 0 : response.trim()) !== null && _a !== void 0 ? _a : "";
     });
 }
-// const hardcodedShortFilmPrompt = `Write a short film in 5 scenes titled "Sarah and Jennifer become Tennis Stars". Give a location, a description, and dialogue.`
-const hardcodedShortFilmPrompt = promptstuffer_1.hardcodedPromptExample;
-_testGenScriptHardcoded();
+_testGenScript();
